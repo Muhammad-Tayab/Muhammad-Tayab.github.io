@@ -1,0 +1,147 @@
+---
+export interface Props {
+  title: string;
+  date: string;
+  platform: string;
+  difficulty: string;
+  category: string;
+  tags: string[];
+  excerpt: string;
+  slug: string;
+}
+const { title, date, platform, difficulty, category, tags, excerpt, slug } = Astro.props;
+const formattedDate = new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
+
+const diffColor: Record<string, string> = { Easy: '#00FF41', Medium: '#FFC800', Hard: '#FF2200' };
+const platformColor: Record<string, string> = { HackTheBox: '#9FEF00', TryHackMe: '#FF3C3C' };
+---
+<article class="ctf-card glass-card">
+  <div class="card-chrome">
+    <div class="chrome-dots">
+      <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+    </div>
+    <span class="chrome-label">ctf/{slug}.md</span>
+    <span class="platform-badge" style={`color: ${platformColor[platform] || 'var(--green)'}`}>
+      {platform === 'HackTheBox' ? 'HTB' : platform === 'TryHackMe' ? 'THM' : platform}
+    </span>
+  </div>
+
+  <div class="card-body">
+    <div class="card-meta-row">
+      <span class="difficulty-pill" style={`color: ${diffColor[difficulty] || 'var(--green)'}; border-color: ${diffColor[difficulty] || 'var(--green)'}40`}>
+        {difficulty}
+      </span>
+      <span class="category-pill">{category}</span>
+      <span class="meta-date dim">{formattedDate}</span>
+    </div>
+
+    <h3 class="card-title">
+      <a href={`/ctf/${slug}`} class="card-title-link">{title}</a>
+    </h3>
+
+    <p class="card-excerpt">{excerpt}</p>
+
+    <div class="card-footer">
+      <div class="card-tags">
+        {tags.slice(0, 3).map(t => <span class="tag">{t}</span>)}
+      </div>
+      <a href={`/ctf/${slug}`} class="read-more">./writeup →</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .ctf-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .card-chrome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .chrome-dots { display: flex; gap: 5px; }
+  .dot-r, .dot-y, .dot-g { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: rgba(255,95,87,0.5); }
+  .dot-y { background: rgba(255,189,46,0.5); }
+  .dot-g { background: rgba(40,202,66,0.5); }
+
+  .chrome-label { flex: 1; font-size: 0.7rem; opacity: 0.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .platform-badge { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; flex-shrink: 0; }
+
+  .card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .card-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .difficulty-pill {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .category-pill {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    padding: 2px 8px;
+    border-radius: 3px;
+    opacity: 0.7;
+  }
+
+  .meta-date { font-size: 0.72rem; }
+
+  .card-title { font-size: 1rem; line-height: 1.35; }
+
+  .card-title-link {
+    color: var(--white);
+    transition: color 0.2s;
+  }
+  .card-title-link:hover { color: var(--green); opacity: 1; }
+
+  .card-excerpt { font-size: 0.8rem; opacity: 0.6; line-height: 1.65; flex: 1; }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .read-more {
+    font-size: 0.75rem;
+    color: var(--green);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+  }
+  .read-more:hover { opacity: 1; }
+</style>

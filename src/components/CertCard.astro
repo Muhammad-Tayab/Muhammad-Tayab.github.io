@@ -1,0 +1,141 @@
+---
+export interface Props {
+  name: string;
+  issuer: string;
+  status: 'completed' | 'in-progress';
+  year?: string;
+  url?: string;
+}
+const { name, issuer, status, year, url } = Astro.props;
+const isProgress = status === 'in-progress';
+---
+<div class={`cert-card glass-card ${isProgress ? 'in-progress' : ''}`}>
+  <div class="cert-stamp">
+    {isProgress
+      ? <span class="stamp-icon">&#9201;</span>
+      : <span class="stamp-icon">&#10003;</span>
+    }
+  </div>
+  <div class="cert-info">
+    <div class="cert-status-line">
+      {isProgress
+        ? <span class="cert-status progress">IN PROGRESS</span>
+        : <span class="cert-status done">VERIFIED</span>
+      }
+      {year && <span class="cert-year dim">{year}</span>}
+    </div>
+    <h4 class="cert-name">{name}</h4>
+    <p class="cert-issuer dim">{issuer}</p>
+  </div>
+  {url && (
+    <a href={url} target="_blank" rel="noopener" class="cert-link" aria-label="View certificate">
+      ↗
+    </a>
+  )}
+</div>
+
+<style>
+  .cert-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cert-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--green);
+  }
+
+  .cert-card.in-progress::before {
+    background: var(--red);
+    animation: certPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes certPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+  }
+
+  .cert-stamp {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    background: var(--green-dim);
+    border: 1px solid rgba(0,255,65,0.2);
+    color: var(--green);
+  }
+
+  .cert-card.in-progress .cert-stamp {
+    background: var(--red-dim);
+    border-color: rgba(255,34,0,0.2);
+    color: var(--red);
+  }
+
+  .cert-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cert-status-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .cert-status {
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  .cert-status.done {
+    background: var(--green-dim);
+    color: var(--green);
+    border: 1px solid rgba(0,255,65,0.2);
+  }
+
+  .cert-status.progress {
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid rgba(255,34,0,0.2);
+  }
+
+  .cert-year { font-size: 0.7rem; }
+
+  .cert-name {
+    font-size: 0.9rem;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .cert-issuer { font-size: 0.75rem; }
+
+  .cert-link {
+    color: var(--green);
+    font-size: 1rem;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+    padding: 4px;
+  }
+
+  .cert-link:hover { opacity: 1; }
+</style>

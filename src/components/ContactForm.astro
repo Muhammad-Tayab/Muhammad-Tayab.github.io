@@ -1,0 +1,297 @@
+---
+// Replace YOUR_FORM_ID with your actual Formspree form ID
+// Get one free at https://formspree.io
+const FORMSPREE_ID = 'YOUR_FORM_ID';
+---
+<div class="contact-terminal glass-card">
+  <div class="terminal-chrome-bar">
+    <div class="chrome-dots">
+      <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+    </div>
+    <span class="chrome-title">contact_form.sh — bash</span>
+  </div>
+
+  <div class="contact-body">
+    <div class="terminal-prompt-block">
+      <span class="green">$</span> cat &gt; message.txt &lt;&lt;EOF
+    </div>
+
+    <form
+      id="contactForm"
+      action={`https://formspree.io/f/${FORMSPREE_ID}`}
+      method="POST"
+      class="contact-form"
+      novalidate
+    >
+      <div class="form-field">
+        <label class="field-label" for="name">
+          <span class="green">→</span> your_name<span class="dim">:</span>
+        </label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          class="field-input"
+          placeholder="John Doe"
+          required
+          autocomplete="name"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="field-label" for="email">
+          <span class="green">→</span> your_email<span class="dim">:</span>
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          class="field-input"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="field-label" for="subject">
+          <span class="green">→</span> subject<span class="dim">:</span>
+        </label>
+        <input
+          id="subject"
+          name="subject"
+          type="text"
+          class="field-input"
+          placeholder="Pentest Engagement / Collaboration"
+          required
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="field-label" for="message">
+          <span class="green">→</span> message<span class="dim">:</span>
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          class="field-input field-textarea"
+          placeholder="Describe your security needs or project..."
+          rows="5"
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-footer-line">
+        <span class="green">$</span> EOF
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span id="submitText">./send_message.sh</span>
+        <span class="blink" id="submitCursor"></span>
+      </button>
+    </form>
+
+    <!-- Success message -->
+    <div class="success-msg" id="successMsg" style="display:none">
+      <div class="success-inner">
+        <div class="success-icon">✓</div>
+        <div>
+          <p class="green">Message transmitted successfully.</p>
+          <p class="dim" style="font-size:0.8rem; margin-top:4px;">
+            I'll decrypt it and respond within 24–48h.
+          </p>
+        </div>
+      </div>
+      <div class="terminal-prompt-block" style="margin-top:16px">
+        <span class="green">$</span> <span class="dim">awaiting response...</span><span class="blink"></span>
+      </div>
+    </div>
+
+    <!-- Error message -->
+    <div class="error-msg" id="errorMsg" style="display:none">
+      <span class="red">✗ Transmission failed.</span>
+      <span class="dim"> Try emailing directly: tayyabbashir461@gmail.com</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .contact-terminal {
+    overflow: hidden;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .terminal-chrome-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .chrome-dots { display: flex; gap: 5px; }
+  .dot-r, .dot-y, .dot-g { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: rgba(255,95,87,0.5); }
+  .dot-y { background: rgba(255,189,46,0.5); }
+  .dot-g { background: rgba(40,202,66,0.5); }
+
+  .chrome-title { font-size: 0.72rem; opacity: 0.4; }
+
+  .contact-body { padding: 28px; }
+
+  .terminal-prompt-block {
+    font-size: 0.8rem;
+    opacity: 0.5;
+    margin-bottom: 20px;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    opacity: 0.8;
+  }
+
+  .field-input {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(0,255,65,0.2);
+    border-radius: 4px;
+    padding: 10px 14px;
+    color: var(--green);
+    font-family: var(--font);
+    font-size: 0.85rem;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    caret-color: var(--green);
+  }
+
+  .field-input::placeholder {
+    color: rgba(0, 255, 65, 0.25);
+  }
+
+  .field-input:focus {
+    border-color: rgba(0,255,65,0.6);
+    box-shadow: 0 0 12px rgba(0,255,65,0.15);
+  }
+
+  .field-textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .form-footer-line {
+    font-size: 0.8rem;
+    opacity: 0.5;
+  }
+
+  .submit-btn {
+    align-self: flex-start;
+    background: var(--green);
+    color: var(--bg);
+    font-family: var(--font);
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 28px;
+    cursor: none;
+    letter-spacing: 0.04em;
+    transition: box-shadow 0.25s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .submit-btn:hover {
+    box-shadow: 0 0 24px var(--green-glow);
+    transform: translateY(-2px);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Success / error */
+  .success-msg, .error-msg {
+    padding: 20px 0;
+  }
+
+  .success-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .success-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--green-dim);
+    border: 1px solid rgba(0,255,65,0.3);
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .error-msg { font-size: 0.82rem; }
+
+  @media (max-width: 600px) {
+    .contact-body { padding: 20px 16px; }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('contactForm') as HTMLFormElement;
+  const btn = document.getElementById('submitBtn') as HTMLButtonElement;
+  const btnText = document.getElementById('submitText')!;
+  const successMsg = document.getElementById('successMsg')!;
+  const errorMsg = document.getElementById('errorMsg')!;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    btn.disabled = true;
+    btnText.textContent = 'transmitting...';
+    errorMsg.style.display = 'none';
+
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' },
+      });
+
+      if (res.ok) {
+        form.style.display = 'none';
+        successMsg.style.display = 'block';
+      } else {
+        throw new Error('Server error');
+      }
+    } catch {
+      errorMsg.style.display = 'block';
+      btn.disabled = false;
+      btnText.textContent = './send_message.sh';
+    }
+  });
+</script>

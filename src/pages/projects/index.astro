@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import Footer from '../../components/Footer.astro';
+
+const allProjects = await Astro.glob('../../content/projects/*.md');
+const live     = allProjects.filter(p => p.frontmatter.status === 'live');
+const upcoming = allProjects.filter(p => p.frontmatter.status === 'coming-soon');
+
+function getSlug(file: any) {
+  return file.file.split('/').pop()!.replace('.md', '');
+}
+---
+<BaseLayout title="Projects | Muhammad Tayab Bashir" description="Security tools, web development projects, and open-source work by Muhammad Tayab Bashir.">
+  <Nav />
+  <main class="page-main">
+    <div class="section">
+      <p class="section-title reveal">$ find ./projects -type f -name "*.sh" | sort</p>
+      <h1 class="section-heading reveal">Projects</h1>
+      <p class="page-desc reveal">
+        A mix of security tooling, web development, and research projects. Some are live —
+        others are currently under development.
+      </p>
+
+      {live.length > 0 && (
+        <div class="proj-section">
+          <h2 class="proj-section-title reveal">
+            <span class="green">▸</span> Live Projects
+          </h2>
+          <div class="projects-grid">
+            {live.map(proj => (
+              <div class="reveal">
+                <ProjectCard
+                  title={proj.frontmatter.title}
+                  excerpt={proj.frontmatter.excerpt}
+                  stack={proj.frontmatter.stack}
+                  github={proj.frontmatter.github}
+                  liveUrl={proj.frontmatter.liveUrl}
+                  status={proj.frontmatter.status}
+                  featured={proj.frontmatter.featured}
+                  slug={getSlug(proj)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {upcoming.length > 0 && (
+        <div class="proj-section">
+          <h2 class="proj-section-title reveal">
+            <span class="red">▸</span> Coming Soon
+            <span class="dim" style="font-size:0.7rem; margin-left:8px">[CLASSIFIED]</span>
+          </h2>
+          <div class="projects-grid">
+            {upcoming.map(proj => (
+              <div class="reveal">
+                <ProjectCard
+                  title={proj.frontmatter.title}
+                  excerpt={proj.frontmatter.excerpt}
+                  stack={proj.frontmatter.stack}
+                  github={proj.frontmatter.github}
+                  liveUrl={proj.frontmatter.liveUrl}
+                  status={proj.frontmatter.status}
+                  slug={getSlug(proj)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .page-main { padding-top: 100px; min-height: 100vh; }
+  .page-desc { font-size: 0.88rem; opacity: 0.6; max-width: 600px; line-height: 1.7; margin-bottom: 48px; }
+
+  .proj-section { margin-bottom: 56px; }
+
+  .proj-section-title {
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+</style>

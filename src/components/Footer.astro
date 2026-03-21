@@ -1,0 +1,101 @@
+---
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="terminal-divider">
+    ════════════════════════════════════════════════════════════════════
+  </div>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="green">n16h70wl55</span>@kali<span class="dim">:~$</span>
+      <span class="dim"> exit</span>
+    </div>
+    <div class="footer-links">
+      <a href="mailto:tayyabbashir461@gmail.com" class="footer-link">email</a>
+      <span class="dim">·</span>
+      <a href="https://www.linkedin.com/in/muhammad-tayab-bashir-694b84125/" target="_blank" rel="noopener" class="footer-link">linkedin</a>
+      <span class="dim">·</span>
+      <a href="https://hackerone.com/n16h70wl55" target="_blank" rel="noopener" class="footer-link">hackerone</a>
+      <span class="dim">·</span>
+      <a href="/blog" class="footer-link">blog</a>
+      <span class="dim">·</span>
+      <a href="/ctf" class="footer-link">ctf</a>
+    </div>
+    <div class="footer-copy dim">
+      <span>© {year} Muhammad Tayab Bashir</span>
+      <span class="dot">·</span>
+      <span>Built with Astro</span>
+      <span class="dot">·</span>
+      <span>No trackers. No cookies.</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid rgba(0, 255, 65, 0.08);
+    padding: 0 24px 40px;
+  }
+
+  .terminal-divider {
+    text-align: center;
+    color: var(--green);
+    opacity: 0.15;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    padding: 24px 0 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-top: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .footer-brand {
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .footer-link {
+    color: rgba(224, 224, 224, 0.55);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .footer-link:hover {
+    color: var(--green);
+    opacity: 1;
+  }
+
+  .footer-copy {
+    font-size: 0.72rem;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.35;
+  }
+
+  .footer-copy .dot {
+    opacity: 0.5;
+  }
+</style>

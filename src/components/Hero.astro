@@ -1,0 +1,422 @@
+---
+---
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <!-- Terminal window chrome -->
+    <div class="terminal-chrome reveal">
+      <div class="chrome-dots">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+      <span class="chrome-title">bash — n16h70wl55@kali: ~</span>
+    </div>
+
+    <div class="terminal-body reveal">
+      <div class="terminal-line">
+        <span class="prompt">┌──(n16h70wl55㉿kali)-[~]</span>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">└─$ </span>
+        <span class="typed-cmd" id="typedCmd"></span><span class="blink" id="cmdCursor"></span>
+      </div>
+      <div class="terminal-output" id="whoamiOutput" style="display:none;">
+        <p><span class="green">Muhammad Tayab Bashir</span></p>
+      </div>
+      <div class="terminal-line" id="roleLine" style="display:none;">
+        <span class="prompt">└─$ </span>
+        <span class="typed-role" id="typedRole"></span><span class="blink" id="roleCursor"></span>
+      </div>
+      <div class="terminal-output" id="roleOutput" style="display:none;">
+        <p id="roleText"></p>
+      </div>
+    </div>
+
+    <div class="hero-tagline reveal" id="heroTagline" style="opacity:0">
+      <h1 class="hero-name">Muhammad Tayab Bashir</h1>
+      <p class="hero-sub">
+        <span class="green">Web Pentesting</span> ·
+        <span class="green">Network Security</span> ·
+        <span class="green">OSINT</span> ·
+        <span class="green">Bug Bounty</span>
+      </p>
+      <p class="hero-status">
+        <span class="status-badge">
+          <span class="pulse-dot"></span> Open to freelance engagements
+        </span>
+        <span class="status-badge preparing">
+          &#x1F512; Preparing for PNTP
+        </span>
+      </p>
+    </div>
+
+    <div class="hero-cta reveal" id="heroCta" style="opacity:0">
+      <a href="/#projects" class="btn-primary">./view_projects.sh</a>
+      <a href="/#contact" class="btn-secondary">ssh contact@tayab.dev</a>
+      <a href="https://hackerone.com/n16h70wl55" target="_blank" rel="noopener" class="btn-ghost">HackerOne ↗</a>
+    </div>
+
+    <div class="hero-scroll reveal" id="heroScroll" style="opacity:0">
+      <span class="dim">scroll to explore</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+
+  <!-- Background matrix rain effect -->
+  <canvas class="matrix-canvas" id="matrixCanvas" aria-hidden="true"></canvas>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 64px;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    width: 100%;
+  }
+
+  /* ── Terminal chrome ── */
+  .terminal-chrome {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    padding: 10px 16px;
+    width: fit-content;
+    min-width: 360px;
+  }
+
+  .chrome-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .dot.red    { background: #FF5F57; }
+  .dot.yellow { background: #FFBD2E; }
+  .dot.green  { background: #28CA42; }
+
+  .chrome-title {
+    font-size: 0.72rem;
+    opacity: 0.4;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Terminal body ── */
+  .terminal-body {
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid var(--glass-border);
+    border-radius: 0 8px 8px 8px;
+    padding: 24px 24px 28px;
+    margin-bottom: 40px;
+    min-height: 120px;
+    min-width: 360px;
+    width: fit-content;
+    backdrop-filter: blur(10px);
+  }
+
+  .terminal-line {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+
+  .prompt {
+    color: var(--green);
+    white-space: pre;
+  }
+
+  .typed-cmd, .typed-role {
+    color: var(--white);
+    font-size: 0.9rem;
+  }
+
+  .terminal-output {
+    padding: 8px 0 8px 16px;
+    font-size: 0.9rem;
+    border-left: 2px solid rgba(0,255,65,0.3);
+    margin: 6px 0 10px;
+  }
+
+  /* ── Tagline ── */
+  .hero-tagline {
+    margin-bottom: 32px;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    transform: translateY(12px);
+  }
+
+  .hero-tagline.show {
+    opacity: 1 !important;
+    transform: translateY(0);
+  }
+
+  .hero-name {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: var(--white);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-sub {
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    opacity: 0.8;
+    margin-bottom: 20px;
+  }
+
+  .hero-status {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--green-dim);
+    border: 1px solid rgba(0,255,65,0.2);
+    color: var(--green);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .status-badge.preparing {
+    background: rgba(255,34,0,0.08);
+    border-color: rgba(255,34,0,0.2);
+    color: var(--red);
+  }
+
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  /* ── CTA buttons ── */
+  .hero-cta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+    transition: opacity 0.8s ease 0.2s;
+    transform: translateY(12px);
+  }
+
+  .hero-cta.show {
+    opacity: 1 !important;
+    transform: translateY(0);
+  }
+
+  .btn-primary {
+    padding: 12px 24px;
+    background: var(--green);
+    color: var(--bg) !important;
+    font-weight: 700;
+    font-size: 0.82rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    transition: box-shadow 0.25s, transform 0.2s;
+    opacity: 1 !important;
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 24px var(--green-glow), 0 4px 12px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    padding: 12px 24px;
+    border: 1px solid rgba(0,255,65,0.4);
+    color: var(--green) !important;
+    font-size: 0.82rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    transition: background 0.25s, box-shadow 0.25s;
+    opacity: 1 !important;
+  }
+
+  .btn-secondary:hover {
+    background: var(--green-dim);
+    box-shadow: 0 0 16px var(--green-glow);
+    opacity: 1 !important;
+  }
+
+  .btn-ghost {
+    padding: 12px 24px;
+    border: 1px solid var(--glass-border);
+    color: rgba(224,224,224,0.6) !important;
+    font-size: 0.82rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    transition: border-color 0.25s, color 0.25s;
+  }
+
+  .btn-ghost:hover {
+    border-color: rgba(0,255,65,0.3);
+    color: var(--green) !important;
+    opacity: 1 !important;
+  }
+
+  /* ── Scroll indicator ── */
+  .hero-scroll {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: opacity 1s ease 0.5s;
+    transform: translateY(12px);
+  }
+
+  .hero-scroll.show {
+    opacity: 1 !important;
+    transform: translateY(0);
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--green), transparent);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollLine {
+    0%   { transform: scaleY(0); transform-origin: top; }
+    50%  { transform: scaleY(1); transform-origin: top; }
+    51%  { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ── Matrix canvas ── */
+  .matrix-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.04;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  @media (max-width: 600px) {
+    .terminal-chrome,
+    .terminal-body {
+      min-width: unset;
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  // ── Matrix rain ──
+  const canvas = document.getElementById('matrixCanvas') as HTMLCanvasElement;
+  const ctx = canvas?.getContext('2d');
+  if (ctx) {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const cols = Math.floor(canvas.width / 18);
+    const drops: number[] = Array(cols).fill(1);
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEF0123456789<>/{}[];'.split('');
+    function drawMatrix() {
+      ctx!.fillStyle = 'rgba(13,13,13,0.05)';
+      ctx!.fillRect(0, 0, canvas.width, canvas.height);
+      ctx!.fillStyle = '#00FF41';
+      ctx!.font = '14px JetBrains Mono, monospace';
+      drops.forEach((y, i) => {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx!.fillText(char, i * 18, y * 18);
+        if (y * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      });
+    }
+    setInterval(drawMatrix, 50);
+    window.addEventListener('resize', () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    });
+  }
+
+  // ── Typewriter sequence ──
+  function typeText(el: HTMLElement, text: string, speed = 60): Promise<void> {
+    return new Promise(resolve => {
+      let i = 0;
+      const timer = setInterval(() => {
+        el.textContent += text[i++];
+        if (i >= text.length) { clearInterval(timer); resolve(); }
+      }, speed);
+    });
+  }
+
+  async function runTerminal() {
+    await new Promise(r => setTimeout(r, 800));
+
+    const cmdEl = document.getElementById('typedCmd')!;
+    const cmdCursor = document.getElementById('cmdCursor')!;
+    const whoamiOutput = document.getElementById('whoamiOutput')!;
+    const roleLine = document.getElementById('roleLine')!;
+    const roleEl = document.getElementById('typedRole')!;
+    const roleCursor = document.getElementById('roleCursor')!;
+    const roleOutput = document.getElementById('roleOutput')!;
+    const roleText = document.getElementById('roleText')!;
+    const tagline = document.getElementById('heroTagline')!;
+    const cta = document.getElementById('heroCta')!;
+    const scroll = document.getElementById('heroScroll')!;
+
+    await typeText(cmdEl, 'whoami', 100);
+    await new Promise(r => setTimeout(r, 400));
+    cmdCursor.style.display = 'none';
+
+    whoamiOutput.style.display = 'block';
+    await new Promise(r => setTimeout(r, 600));
+
+    roleLine.style.display = 'flex';
+    await typeText(roleEl, 'cat role.txt', 90);
+    await new Promise(r => setTimeout(r, 400));
+    roleCursor.style.display = 'none';
+
+    roleOutput.style.display = 'block';
+    const roles = ['Penetration Tester', ' & Security Researcher'];
+    roleText.innerHTML = `<span style="color:var(--green)">${roles[0]}</span>${roles[1]}`;
+
+    await new Promise(r => setTimeout(r, 500));
+    tagline.classList.add('show');
+    await new Promise(r => setTimeout(r, 300));
+    cta.classList.add('show');
+    await new Promise(r => setTimeout(r, 300));
+    scroll.classList.add('show');
+  }
+
+  runTerminal();
+</script>

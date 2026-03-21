@@ -1,0 +1,511 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import BlogCard from '../components/BlogCard.astro';
+import CTFCard from '../components/CTFCard.astro';
+import CertCard from '../components/CertCard.astro';
+import ToolGrid from '../components/ToolGrid.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Footer from '../components/Footer.astro';
+
+// ── Load content ──────────────────────────────────────────────────────────────
+const blogFiles = await Astro.glob('../content/blog/*.md');
+const ctfFiles  = await Astro.glob('../content/ctf/*.md');
+const projFiles = await Astro.glob('../content/projects/*.md');
+
+const blogs = blogFiles
+  .filter(p => p.frontmatter.published)
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
+  .slice(0, 3);
+
+const ctfs = ctfFiles
+  .filter(p => p.frontmatter.published)
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
+  .slice(0, 3);
+
+const featuredProjects = projFiles
+  .filter(p => p.frontmatter.featured)
+  .slice(0, 3);
+
+// Stats
+const stats = [
+  { value: 50,   suffix: '+', label: 'Vulnerabilities Found',    sublabel: 'in first 6 months'       },
+  { value: 8,    suffix: '+', label: 'Bug Bounty Companies',      sublabel: 'HackerOne & Bugcrowd'    },
+  { value: 1,    suffix: '+', label: 'Years Professional Exp.',   sublabel: 'Cyber Silo Pvt. Ltd.'    },
+  { value: 100,  suffix: '+', label: 'Pentest Reports Written',   sublabel: 'with remediation steps'  },
+];
+
+// Bug Bounty companies
+const bbCompanies = [
+  'Cloudflare', 'Expedia Group', 'Shutterfly',
+  'LY Corporation', 'Modern Treasury', 'Mattermost', 'Forge Global',
+];
+
+// Certs
+const certs = [
+  { name: 'PNTP — Practical Network Penetration Testing', issuer: 'TCM Security', status: 'in-progress' as const },
+  { name: 'Practical Ethical Hacking — The Complete Course', issuer: 'Udemy', status: 'completed' as const, year: '2023' },
+  { name: 'Bug Bounty Hunting with Burp Suite', issuer: 'Udemy', status: 'completed' as const, year: '2023' },
+  { name: 'Cyber Security', issuer: 'Udemy', status: 'completed' as const, year: '2022' },
+  { name: 'Cryptography', issuer: 'Cybrary', status: 'completed' as const, year: '2022' },
+  { name: 'CompTIA Linux+', issuer: 'Cybrary', status: 'completed' as const, year: '2022' },
+  { name: 'Penetration Testing & Ethical Hacking', issuer: 'Cybrary', status: 'completed' as const, year: '2022' },
+  { name: 'IELTS — 7.0 Bands', issuer: 'British Council', status: 'completed' as const },
+];
+
+function getSlug(file: any) {
+  return file.file.split('/').pop()!.replace('.md', '');
+}
+---
+<BaseLayout>
+  <Nav />
+
+  <main>
+    <!-- ── HERO ── -->
+    <Hero />
+
+    <div class="terminal-divider">
+      ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    </div>
+
+    <!-- ── ABOUT ── -->
+    <section id="about" class="section">
+      <p class="section-title reveal">$ cat about.txt</p>
+      <h2 class="section-heading reveal">About Me</h2>
+
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p>
+            Experienced <span class="green">Penetration Tester</span> and <span class="green">Bug Bounty Hunter</span>
+            with 1+ year in professional cybersecurity. I specialize in identifying and mitigating security
+            vulnerabilities in web applications, APIs, and network infrastructure.
+          </p>
+          <p style="margin-top:16px">
+            At <span class="green">Cyber Silo Pvt. Ltd.</span>, I performed weekly grey-box and black-box penetration
+            tests, identified OWASP Top 10 vulnerabilities across multiple client applications, and authored
+            comprehensive vulnerability assessment reports aligned with PCI DSS standards.
+          </p>
+          <p style="margin-top:16px">
+            As an independent <span class="green">Bug Bounty Hunter</span> on HackerOne and Bugcrowd, I've reported
+            critical security flaws to companies including Cloudflare, Expedia Group, Shutterfly, LY Corporation,
+            Modern Treasury, Mattermost, and Forge Global — earning monetary rewards and recognition.
+          </p>
+          <div class="about-links" style="margin-top:28px">
+            <a href="https://hackerone.com/n16h70wl55" target="_blank" rel="noopener" class="about-link">
+              HackerOne ↗
+            </a>
+            <a href="https://www.linkedin.com/in/muhammad-tayab-bashir-694b84125/" target="_blank" rel="noopener" class="about-link">
+              LinkedIn ↗
+            </a>
+            <a href="mailto:tayyabbashir461@gmail.com" class="about-link">
+              Email ↗
+            </a>
+          </div>
+        </div>
+
+        <div class="about-sidebar reveal">
+          <div class="sidebar-block glass-card">
+            <h4 class="sidebar-heading"><span class="green">></span> Focus Areas</h4>
+            <ul class="sidebar-list">
+              <li>Web Application Pentesting</li>
+              <li>Network Security Assessment</li>
+              <li>OWASP Top 10 Exploitation</li>
+              <li>OSINT & Reconnaissance</li>
+              <li>Bug Bounty Hunting</li>
+              <li>Vulnerability Research</li>
+              <li>PCI DSS Compliance</li>
+            </ul>
+          </div>
+          <div class="sidebar-block glass-card">
+            <h4 class="sidebar-heading"><span class="green">></span> Education</h4>
+            <div class="edu-item">
+              <p class="edu-degree">B.Sc. Computer Science</p>
+              <p class="edu-school dim">University of Central Punjab</p>
+              <p class="dim" style="font-size:0.72rem">2019 – 2024 · CGPA 3.2</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ SYSTEM STATS ] ════════════════
+    </div>
+
+    <!-- ── STATS ── -->
+    <section id="stats" class="section">
+      <div class="stats-grid">
+        {stats.map((stat, i) => (
+          <div class="stat-card glass-card reveal" style={`animation-delay:${i*100}ms`}>
+            <div class="stat-value">
+              <span class="stat-num green" data-target={stat.value}>0</span>
+              <span class="green">{stat.suffix}</span>
+            </div>
+            <p class="stat-label">{stat.label}</p>
+            <p class="stat-sub dim">{stat.sublabel}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    </div>
+
+    <!-- ── PROJECTS ── -->
+    <section id="projects" class="section">
+      <p class="section-title reveal">$ ls -la ./projects/</p>
+      <h2 class="section-heading reveal">Projects</h2>
+      <div class="projects-grid">
+        {featuredProjects.map(proj => (
+          <div class="reveal">
+            <ProjectCard
+              title={proj.frontmatter.title}
+              excerpt={proj.frontmatter.excerpt}
+              stack={proj.frontmatter.stack}
+              github={proj.frontmatter.github}
+              liveUrl={proj.frontmatter.liveUrl}
+              status={proj.frontmatter.status}
+              featured={proj.frontmatter.featured}
+              slug={getSlug(proj)}
+            />
+          </div>
+        ))}
+      </div>
+      <div class="see-all reveal">
+        <a href="/projects" class="see-all-link">ls -la ./all-projects/ →</a>
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ BLOG ] ════════════════
+    </div>
+
+    <!-- ── BLOG ── -->
+    <section id="blog" class="section">
+      <p class="section-title reveal">$ cat blog/recent.txt</p>
+      <h2 class="section-heading reveal">Latest Posts</h2>
+      <div class="cards-grid">
+        {blogs.map(post => (
+          <div class="reveal">
+            <BlogCard
+              title={post.frontmatter.title}
+              date={post.frontmatter.date}
+              tags={post.frontmatter.tags}
+              excerpt={post.frontmatter.excerpt}
+              slug={getSlug(post)}
+              platform={post.frontmatter.platform}
+            />
+          </div>
+        ))}
+      </div>
+      <div class="see-all reveal">
+        <a href="/blog" class="see-all-link">cat blog/all-posts.txt →</a>
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ CTF WRITEUPS ] ════════════════
+    </div>
+
+    <!-- ── CTF ── -->
+    <section id="ctf" class="section">
+      <p class="section-title reveal">$ cat ctf/recent.txt</p>
+      <h2 class="section-heading reveal">CTF Writeups</h2>
+      <div class="cards-grid">
+        {ctfs.map(ctf => (
+          <div class="reveal">
+            <CTFCard
+              title={ctf.frontmatter.title}
+              date={ctf.frontmatter.date}
+              platform={ctf.frontmatter.platform}
+              difficulty={ctf.frontmatter.difficulty}
+              category={ctf.frontmatter.category}
+              tags={ctf.frontmatter.tags}
+              excerpt={ctf.frontmatter.excerpt}
+              slug={getSlug(ctf)}
+            />
+          </div>
+        ))}
+      </div>
+      <div class="see-all reveal">
+        <a href="/ctf" class="see-all-link">cat ctf/all-writeups.txt →</a>
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ CERTIFICATIONS ] ════════════════
+    </div>
+
+    <!-- ── CERTIFICATIONS ── -->
+    <section id="certs" class="section">
+      <p class="section-title reveal">$ ls -la ./certs/</p>
+      <h2 class="section-heading reveal">Certifications</h2>
+      <div class="certs-grid">
+        {certs.map(cert => (
+          <div class="reveal">
+            <CertCard
+              name={cert.name}
+              issuer={cert.issuer}
+              status={cert.status}
+              year={cert.year}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ BUG BOUNTY ] ════════════════
+    </div>
+
+    <!-- ── BUG BOUNTY ── -->
+    <section id="bounty" class="section">
+      <p class="section-title reveal">$ cat bounty/companies.txt</p>
+      <h2 class="section-heading reveal">Bug Bounty Hall of Fame</h2>
+      <p class="section-desc reveal">
+        Critical vulnerabilities reported and rewarded by these organizations on
+        <a href="https://hackerone.com/n16h70wl55" target="_blank" rel="noopener">HackerOne</a> and Bugcrowd.
+      </p>
+      <div class="bounty-grid reveal">
+        {bbCompanies.map(company => (
+          <div class="bounty-pill glass-card">
+            <span class="bounty-bullet green">▸</span>
+            <span>{company}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ TOOLS ] ════════════════
+    </div>
+
+    <!-- ── TOOLS ── -->
+    <section id="tools" class="section">
+      <p class="section-title reveal">$ which --all tools</p>
+      <h2 class="section-heading reveal">Arsenal</h2>
+      <ToolGrid />
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ CONTACT ] ════════════════
+    </div>
+
+    <!-- ── CONTACT ── -->
+    <section id="contact" class="section">
+      <p class="section-title reveal">$ ssh contact@tayab.dev</p>
+      <h2 class="section-heading reveal">Get In Touch</h2>
+      <p class="section-desc reveal" style="margin-bottom:40px">
+        Available for freelance penetration testing engagements, bug bounty collaborations,
+        and security consulting. Response within 24–48 hours.
+      </p>
+      <div class="reveal">
+        <ContactForm />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .section-desc {
+    font-size: 0.88rem;
+    opacity: 0.65;
+    max-width: 620px;
+    line-height: 1.7;
+  }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-size: 0.88rem;
+    opacity: 0.8;
+    line-height: 1.8;
+  }
+
+  .about-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .about-link {
+    padding: 8px 16px;
+    border: 1px solid rgba(0,255,65,0.25);
+    border-radius: 4px;
+    color: var(--green);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .about-link:hover {
+    background: var(--green-dim);
+    box-shadow: 0 0 12px var(--green-glow);
+    opacity: 1;
+  }
+
+  .sidebar-block {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .sidebar-heading {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    color: var(--green);
+  }
+
+  .sidebar-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .sidebar-list li {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .sidebar-list li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+  }
+
+  .edu-degree { font-size: 0.88rem; color: var(--white); margin-bottom: 2px; }
+  .edu-school { font-size: 0.78rem; margin-bottom: 2px; }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .stat-card {
+    padding: 28px 24px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .stat-sub { font-size: 0.72rem; }
+
+  /* Projects grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  /* Cards grid (blog / ctf) */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  /* Certs */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  /* Bug bounty */
+  .bounty-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .bounty-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    transition: all 0.25s;
+  }
+
+  /* See all */
+  .see-all {
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .see-all-link {
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: var(--green);
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .see-all-link:hover { opacity: 1; }
+
+  @media (max-width: 860px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // ── Count-up animation for stats ──
+  function countUp(el: HTMLElement, target: number, duration = 1800) {
+    let start = 0;
+    const step = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(ease * target).toString();
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const statNums = document.querySelectorAll('.stat-num[data-target]');
+  const statsObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target as HTMLElement;
+        countUp(el, parseInt(el.dataset.target || '0'));
+        statsObs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  statNums.forEach(el => statsObs.observe(el));
+</script>

@@ -1,0 +1,250 @@
+---
+const navLinks = [
+  { href: '/#about',    label: 'about'    },
+  { href: '/#projects', label: 'projects' },
+  { href: '/#ctf',      label: 'ctf'      },
+  { href: '/blog',      label: 'blog'     },
+  { href: '/#certs',    label: 'certs'    },
+  { href: '/#contact',  label: 'contact'  },
+];
+---
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <span class="green">~</span>/n16h70wl55<span class="blink"></span>
+    </a>
+
+    <div class="nav-center">
+      {navLinks.map(link => (
+        <a href={link.href} class="nav-link" data-nav-link>{link.label}</a>
+      ))}
+    </div>
+
+    <div class="nav-status">
+      <span class="status-dot"></span>
+      <span class="status-text">ONLINE</span>
+    </div>
+
+    <button class="nav-burger" id="navBurger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="nav-mobile" id="navMobile">
+    {navLinks.map(link => (
+      <a href={link.href} class="nav-mobile-link">{link.label}</a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0 24px;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background 0.35s ease, border-color 0.35s ease, backdrop-filter 0.35s ease;
+  }
+
+  .nav.scrolled {
+    background: rgba(13, 13, 13, 0.85);
+    border-bottom-color: rgba(0, 255, 65, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .nav-logo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-logo:hover { opacity: 1; }
+
+  .nav-center {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .nav-link {
+    color: rgba(224, 224, 224, 0.6);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+    position: relative;
+  }
+
+  .nav-link::before {
+    content: '> ';
+    color: var(--green);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--green);
+    background: rgba(0, 255, 65, 0.06);
+    opacity: 1;
+  }
+
+  .nav-link:hover::before,
+  .nav-link.active::before {
+    opacity: 1;
+  }
+
+  /* Status indicator */
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--green); }
+    50%       { opacity: 0.5; box-shadow: 0 0 2px var(--green); }
+  }
+
+  /* Burger */
+  .nav-burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: 1px solid rgba(0,255,65,0.3);
+    border-radius: 4px;
+    cursor: none;
+    padding: 8px;
+    flex-shrink: 0;
+  }
+
+  .nav-burger span {
+    display: block;
+    height: 1.5px;
+    background: var(--green);
+    transition: transform 0.25s, opacity 0.25s;
+  }
+
+  .nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-burger.open span:nth-child(2) { opacity: 0; }
+  .nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* Mobile menu */
+  .nav-mobile {
+    display: none;
+    flex-direction: column;
+    background: rgba(13,13,13,0.96);
+    border-top: 1px solid rgba(0,255,65,0.1);
+    padding: 16px 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .nav-mobile.open {
+    max-height: 400px;
+  }
+
+  .nav-mobile-link {
+    color: rgba(224,224,224,0.7);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .nav-mobile-link:hover {
+    color: var(--green);
+    background: rgba(0,255,65,0.05);
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .nav-center { display: none; }
+    .nav-status { display: none; }
+    .nav-burger { display: flex; margin-left: auto; }
+    .nav-mobile { display: flex; }
+  }
+</style>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  const burger = document.getElementById('navBurger');
+  const mobile = document.getElementById('navMobile');
+
+  // Scroll → dark nav
+  window.addEventListener('scroll', () => {
+    nav?.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Burger toggle
+  burger?.addEventListener('click', () => {
+    const open = burger.classList.toggle('open');
+    mobile?.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+  });
+
+  // Close mobile on link click
+  document.querySelectorAll('.nav-mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      burger?.classList.remove('open');
+      mobile?.classList.remove('open');
+      burger?.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Active link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('[data-nav-link]');
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`[data-nav-link][href="/#${entry.target.id}"]`);
+        active?.classList.add('active');
+      }
+    });
+  }, { threshold: 0.4 });
+
+  sections.forEach(s => sectionObserver.observe(s));
+</script>

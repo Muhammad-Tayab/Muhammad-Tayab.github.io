@@ -1,0 +1,182 @@
+---
+const tools = [
+  { name: 'Burp Suite',       category: 'web'     },
+  { name: 'Caido',            category: 'web'     },
+  { name: 'Nmap',             category: 'network' },
+  { name: 'Metasploit',       category: 'exploit' },
+  { name: 'Wireshark',        category: 'network' },
+  { name: 'Maltego',          category: 'osint'   },
+  { name: 'SQLmap',           category: 'web'     },
+  { name: 'Amass',            category: 'recon'   },
+  { name: 'Hydra',            category: 'exploit' },
+  { name: 'Nikto',            category: 'web'     },
+  { name: 'John the Ripper',  category: 'exploit' },
+  { name: 'BeEF',             category: 'web'     },
+  { name: 'DirBuster',        category: 'recon'   },
+  { name: 'WPScan',           category: 'web'     },
+  { name: 'Nessus',           category: 'vuln'    },
+  { name: 'Finddomain',       category: 'recon'   },
+  { name: 'Python',           category: 'lang'    },
+  { name: 'Bash',             category: 'lang'    },
+  { name: 'Linux',            category: 'os'      },
+  { name: 'VMware',           category: 'infra'   },
+];
+
+const catColors: Record<string, string> = {
+  web:     '#00FF41',
+  network: '#00BFFF',
+  exploit: '#FF2200',
+  osint:   '#FFC800',
+  recon:   '#9FEF00',
+  vuln:    '#FF6600',
+  lang:    '#CC88FF',
+  os:      '#00FFFF',
+  infra:   '#AAAAAA',
+};
+---
+<div class="tool-grid" id="toolGrid">
+  {tools.map((tool, i) => (
+    <div
+      class="tool-item"
+      data-category={tool.category}
+      style={`--tool-color: ${catColors[tool.category]}; animation-delay: ${i * 50}ms`}
+    >
+      <span class="tool-dot" style={`background: ${catColors[tool.category]}`}></span>
+      <span class="tool-name">{tool.name}</span>
+      <span class="tool-cat dim">{tool.category}</span>
+    </div>
+  ))}
+</div>
+
+<div class="tool-legend">
+  {Object.entries(catColors).map(([cat, color]) => (
+    <span class="legend-item">
+      <span class="legend-dot" style={`background:${color}`}></span>
+      {cat}
+    </span>
+  ))}
+</div>
+
+<style>
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .tool-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    cursor: default;
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease,
+      background 0.25s,
+      box-shadow 0.25s,
+      border-color 0.25s;
+  }
+
+  .tool-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .tool-item:hover {
+    background: rgba(var(--tool-color), 0.08);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--tool-color) 30%, transparent);
+    border-color: color-mix(in srgb, var(--tool-color) 40%, transparent);
+  }
+
+  /* Fallback for browsers without color-mix */
+  .tool-item:hover {
+    box-shadow: 0 0 16px rgba(0,255,65,0.2);
+    border-color: rgba(0,255,65,0.25);
+  }
+
+  .tool-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .tool-item:hover .tool-dot {
+    box-shadow: 0 0 6px currentColor;
+  }
+
+  .tool-name {
+    font-size: 0.8rem;
+    color: var(--white);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tool-cat {
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.35;
+    flex-shrink: 0;
+  }
+
+  /* Legend */
+  .tool-legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.45;
+  }
+
+  .legend-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+</style>
+
+<script>
+  const items = document.querySelectorAll('.tool-item');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // staggered reveal uses CSS animation-delay already set inline
+        (entry.target as HTMLElement).classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05 });
+
+  // Observe parent grid so all items trigger together
+  const grid = document.getElementById('toolGrid');
+  if (grid) {
+    const gridObs = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        items.forEach(item => item.classList.add('visible'));
+        gridObs.disconnect();
+      }
+    }, { threshold: 0.1 });
+    gridObs.observe(grid);
+  }
+</script>

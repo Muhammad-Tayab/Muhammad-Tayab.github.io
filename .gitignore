@@ -1,0 +1,22 @@
+# Build output
+dist/
+.output/
+
+# Node
+node_modules/
+
+# Astro
+.astro/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Env files — never commit secrets
+.env
+.env.local
+.env.production
