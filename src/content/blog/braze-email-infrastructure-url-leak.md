@@ -23,7 +23,7 @@ My first thought: *surely not.*
 
 My second thought: *oh no.*
 
-![This is fine](../../assets/blog/this-is-fine.gif)
+![This is fine](/assets/blog/this-is-fine.gif)
 
 ---
 
@@ -60,7 +60,7 @@ Through passive recon (I cannot stress *passive* enough — purely reading what'
 
 The irony is almost poetic: the security tools your users install to *protect* themselves are the exact mechanism creating this exposure.
 
-![Galaxy brain](../../assets/blog/galaxy-brain.gif)
+![Galaxy brain](/assets/blog/galaxy-brain.gif)
 
 ---
 
@@ -90,7 +90,7 @@ Cool. That stops *future* indexing. Doesn't help with the thousands of URLs alre
 
 Report closed: **Informative**. No bounty, no fix committed, no acknowledgment that this is a systemic pattern worth addressing.
 
-![Surprised Pikachu](../../assets/blog/surprised-pikachu.gif)
+![Surprised Pikachu](/assets/blog/surprised-pikachu.gif)
 
 ---
 
