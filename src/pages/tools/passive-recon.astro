@@ -46,7 +46,7 @@ import Footer from '../../components/Footer.astro';
       <div class="target-bar glass-card">
         <div class="target-row">
           <label class="target-label"><span class="green">$</span> target</label>
-          <input id="target-input" class="target-input" placeholder="example.com" spellcheck="false" />
+          <input id="target-input" class="target-input" placeholder="example.com" spellcheck="false" autocomplete="off" />
         </div>
         <div class="target-row">
           <label class="target-label"><span class="green">$</span> engine</label>
@@ -67,11 +67,12 @@ import Footer from '../../components/Footer.astro';
         </div>
         <div class="target-row">
           <label class="target-label"><span class="green">$</span> grep</label>
-          <input id="search-input" class="target-input" placeholder="Filter techniques…" spellcheck="false" />
+          <input id="search-input" class="target-input" placeholder="Filter techniques…" spellcheck="false" autocomplete="off" />
         </div>
         <div class="target-actions">
-          <button id="filter-btn" class="action-btn" onclick="toggleFilter()">unchecked only</button>
-          <button class="action-btn reset" onclick="resetAll()">↺ reset</button>
+          <button id="filter-btn" class="action-btn">unchecked only</button>
+          <button id="open-checked-btn" class="action-btn open-all">open checked</button>
+          <button id="reset-btn" class="action-btn reset">↺ reset</button>
         </div>
       </div>
 
@@ -109,7 +110,6 @@ import Footer from '../../components/Footer.astro';
     min-height: 100vh;
   }
 
-  /* ── Hero ── */
   .recon-hero {
     max-width: 1100px;
     margin: 0 auto;
@@ -166,14 +166,12 @@ import Footer from '../../components/Footer.astro';
     opacity: 0.5;
   }
 
-  /* ── Tool section ── */
   .recon-tool {
     max-width: 1100px;
     margin: 0 auto;
     padding: 32px 24px 48px;
   }
 
-  /* ── Target bar ── */
   .target-bar {
     padding: 20px 24px;
     margin-bottom: 28px;
@@ -205,34 +203,36 @@ import Footer from '../../components/Footer.astro';
     flex: 1;
     font-family: var(--font);
     font-size: 0.82rem;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 65, 0.2);
     border-radius: 4px;
-    padding: 9px 14px;
-    color: var(--green);
+    padding: 10px 14px;
+    color: #e0e0e0;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   .target-input::placeholder {
-    color: rgba(0, 255, 65, 0.25);
+    color: rgba(224, 224, 224, 0.3);
   }
 
   .target-input:focus,
   .target-select:focus {
-    border-color: rgba(0, 255, 65, 0.4);
+    border-color: rgba(0, 255, 65, 0.5);
     box-shadow: 0 0 12px var(--green-glow);
+    color: #ffffff;
   }
 
   .target-select option {
     background: #111;
-    color: var(--green);
+    color: #e0e0e0;
   }
 
   .target-actions {
     display: flex;
     gap: 8px;
     flex-shrink: 0;
+    flex-wrap: wrap;
   }
 
   .action-btn {
@@ -241,16 +241,16 @@ import Footer from '../../components/Footer.astro';
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 9px 16px;
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 4px;
     background: transparent;
-    color: rgba(224, 224, 224, 0.5);
+    color: rgba(224, 224, 224, 0.6);
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .action-btn:hover {
-    border-color: rgba(0, 255, 65, 0.3);
+    border-color: rgba(0, 255, 65, 0.4);
     color: var(--green);
   }
 
@@ -260,12 +260,17 @@ import Footer from '../../components/Footer.astro';
     background: var(--green-dim);
   }
 
+  .action-btn.open-all:hover {
+    border-color: rgba(0, 255, 65, 0.5);
+    background: rgba(0, 255, 65, 0.1);
+    color: var(--green);
+  }
+
   .action-btn.reset:hover {
     border-color: rgba(255, 34, 0, 0.4);
     color: var(--red);
   }
 
-  /* ── Progress ── */
   .progress-wrap {
     margin-bottom: 32px;
   }
@@ -303,14 +308,12 @@ import Footer from '../../components/Footer.astro';
     box-shadow: 0 0 8px var(--green-glow);
   }
 
-  /* ── Categories ── */
   .categories {
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
 
-  /* ── Disclaimer ── */
   .disclaimer {
     max-width: 1100px;
     margin: 0 auto;
@@ -328,24 +331,14 @@ import Footer from '../../components/Footer.astro';
   }
 
   @media (max-width: 768px) {
-    .target-bar {
-      flex-direction: column;
-    }
-    .target-row {
-      min-width: 100%;
-    }
-    .target-actions {
-      width: 100%;
-      justify-content: stretch;
-    }
-    .target-actions .action-btn {
-      flex: 1;
-    }
+    .target-bar { flex-direction: column; }
+    .target-row { min-width: 100%; }
+    .target-actions { width: 100%; }
+    .target-actions .action-btn { flex: 1; }
   }
 </style>
 
 <style is:global>
-  /* ── Category cards ── */
   .cat-card {
     border: 1px solid var(--glass-border);
     border-radius: 8px;
@@ -362,14 +355,11 @@ import Footer from '../../components/Footer.astro';
     padding: 14px 20px;
     cursor: pointer;
     background: rgba(0, 255, 65, 0.02);
-    border-bottom: 1px solid transparent;
     user-select: none;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s;
   }
 
-  .cat-header:hover {
-    background: rgba(0, 255, 65, 0.05);
-  }
+  .cat-header:hover { background: rgba(0, 255, 65, 0.05); }
 
   .cat-name {
     flex: 1;
@@ -378,11 +368,7 @@ import Footer from '../../components/Footer.astro';
     color: var(--white);
   }
 
-  .cat-engines {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
+  .cat-engines { display: flex; gap: 5px; flex-wrap: wrap; }
 
   .eng-tag {
     font-family: var(--font);
@@ -395,7 +381,7 @@ import Footer from '../../components/Footer.astro';
 
   .cat-prog {
     font-size: 0.72rem;
-    color: rgba(224, 224, 224, 0.4);
+    color: rgba(224, 224, 224, 0.5);
     white-space: nowrap;
   }
 
@@ -407,15 +393,44 @@ import Footer from '../../components/Footer.astro';
     opacity: 0.6;
   }
 
-  .cat-chevron.open {
-    transform: rotate(180deg);
+  .cat-chevron.open { transform: rotate(180deg); }
+
+  .cat-body { border-top: 1px solid var(--glass-border); }
+
+  /* ── Category action bar ── */
+  .cat-actions {
+    display: flex;
+    gap: 6px;
+    padding: 8px 20px;
+    background: rgba(0, 255, 65, 0.02);
+    border-bottom: 1px solid var(--glass-border);
   }
 
-  .cat-body {
-    border-top: 1px solid var(--glass-border);
+  .cat-action-btn {
+    font-family: var(--font);
+    font-size: 0.62rem;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: transparent;
+    color: rgba(224, 224, 224, 0.5);
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
-  /* ── Insight box ── */
+  .cat-action-btn:hover {
+    border-color: rgba(0, 255, 65, 0.4);
+    color: var(--green);
+  }
+
+  .cat-action-btn.open-cat:hover {
+    background: rgba(0, 255, 65, 0.1);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
   .cat-insight {
     padding: 12px 20px;
     background: rgba(0, 255, 65, 0.03);
@@ -434,7 +449,6 @@ import Footer from '../../components/Footer.astro';
     margin-top: 1px;
   }
 
-  /* ── Category sub-progress ── */
   .cat-subprog {
     height: 2px;
     background: rgba(255, 255, 255, 0.04);
@@ -449,7 +463,6 @@ import Footer from '../../components/Footer.astro';
     box-shadow: 0 0 4px var(--green-glow);
   }
 
-  /* ── Dork rows ── */
   .dork-row {
     display: flex;
     align-items: center;
@@ -459,17 +472,9 @@ import Footer from '../../components/Footer.astro';
     transition: background 0.15s;
   }
 
-  .dork-row:last-child {
-    border-bottom: none;
-  }
-
-  .dork-row:hover {
-    background: rgba(0, 255, 65, 0.03);
-  }
-
-  .dork-row.done {
-    background: rgba(0, 255, 65, 0.04);
-  }
+  .dork-row:last-child { border-bottom: none; }
+  .dork-row:hover { background: rgba(0, 255, 65, 0.03); }
+  .dork-row.done { background: rgba(0, 255, 65, 0.04); }
 
   .dork-check {
     width: 16px;
@@ -479,16 +484,12 @@ import Footer from '../../components/Footer.astro';
     flex-shrink: 0;
   }
 
-  .dork-info {
-    flex: 1;
-    min-width: 0;
-  }
+  .dork-info { flex: 1; min-width: 0; }
 
   .dork-label {
     font-size: 0.78rem;
     font-weight: 500;
-    color: var(--white);
-    opacity: 0.85;
+    color: #e0e0e0;
   }
 
   .dork-row.done .dork-label {
@@ -499,19 +500,15 @@ import Footer from '../../components/Footer.astro';
   }
 
   .dork-query {
-    font-size: 0.65rem;
-    color: rgba(0, 255, 65, 0.35);
+    font-size: 0.68rem;
+    color: rgba(224, 224, 224, 0.45);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
-  .dork-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
+  .dork-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
   .dork-btn {
     font-family: var(--font);
@@ -519,15 +516,15 @@ import Footer from '../../components/Footer.astro';
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     background: transparent;
-    color: rgba(224, 224, 224, 0.45);
+    color: rgba(224, 224, 224, 0.55);
     transition: all 0.15s;
     white-space: nowrap;
   }
 
   .dork-btn:hover {
-    border-color: rgba(0, 255, 65, 0.3);
+    border-color: rgba(0, 255, 65, 0.4);
     color: var(--green);
   }
 
@@ -539,7 +536,7 @@ import Footer from '../../components/Footer.astro';
 
   .dork-btn.open-btn:hover {
     background: var(--green);
-    color: var(--bg);
+    color: #0D0D0D;
     border-color: var(--green);
   }
 
@@ -551,391 +548,485 @@ import Footer from '../../components/Footer.astro';
   }
 </style>
 
-<script>
-const ENGINE_URLS = {
-  Google: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
-  Bing: q => `https://www.bing.com/search?q=${encodeURIComponent(q)}`,
-  Yandex: q => `https://yandex.com/search/?text=${encodeURIComponent(q)}`,
-  DuckDuckGo: q => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
-  Shodan: q => `https://www.shodan.io/search?query=${encodeURIComponent(q)}`,
-  FOFA: q => `https://en.fofa.info/result?qbase64=${btoa(q)}`,
-  Censys: q => `https://search.censys.io/search?resource=hosts&q=${encodeURIComponent(q)}`,
-  GreyNoise: q => `https://viz.greynoise.io/query/?gnql=${encodeURIComponent(q)}`,
-  GitHub: q => `https://github.com/search?q=${encodeURIComponent(q)}&type=code`,
-  GitLab: q => `https://gitlab.com/search?search=${encodeURIComponent(q)}&scope=blobs`,
-  'Grep.app': q => `https://grep.app/search?q=${encodeURIComponent(q)}`,
-  IntelX: q => `https://intelx.io/?s=${encodeURIComponent(q)}`,
-};
+<script is:inline>
+(function() {
+  const ENGINE_URLS = {
+    Google: function(q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); },
+    Bing: function(q) { return 'https://www.bing.com/search?q=' + encodeURIComponent(q); },
+    Yandex: function(q) { return 'https://yandex.com/search/?text=' + encodeURIComponent(q); },
+    DuckDuckGo: function(q) { return 'https://duckduckgo.com/?q=' + encodeURIComponent(q); },
+    Shodan: function(q) { return 'https://www.shodan.io/search?query=' + encodeURIComponent(q); },
+    FOFA: function(q) { return 'https://en.fofa.info/result?qbase64=' + btoa(q); },
+    Censys: function(q) { return 'https://search.censys.io/search?resource=hosts&q=' + encodeURIComponent(q); },
+    GreyNoise: function(q) { return 'https://viz.greynoise.io/query/?gnql=' + encodeURIComponent(q); },
+    GitHub: function(q) { return 'https://github.com/search?q=' + encodeURIComponent(q) + '&type=code'; },
+    GitLab: function(q) { return 'https://gitlab.com/search?search=' + encodeURIComponent(q) + '&scope=blobs'; },
+    'Grep.app': function(q) { return 'https://grep.app/search?q=' + encodeURIComponent(q); },
+    IntelX: function(q) { return 'https://intelx.io/?s=' + encodeURIComponent(q); }
+  };
 
-const ENGINE_COLORS = {
-  Google:'#4285F4',Bing:'#008373',Yandex:'#FF3B30',DuckDuckGo:'#DE5833',
-  Shodan:'#D93025',FOFA:'#1A73E8',Censys:'#00897B',GreyNoise:'#546E7A',
-  GitHub:'#6E40C9',GitLab:'#E24329','Grep.app':'#FF6B35',IntelX:'#00FF41'
-};
+  var ENGINE_COLORS = {
+    Google:'#4285F4',Bing:'#008373',Yandex:'#FF3B30',DuckDuckGo:'#DE5833',
+    Shodan:'#D93025',FOFA:'#1A73E8',Censys:'#00897B',GreyNoise:'#546E7A',
+    GitHub:'#6E40C9',GitLab:'#E24329','Grep.app':'#FF6B35',IntelX:'#00FF41'
+  };
 
-const CATS = [
-  {
-    id:'google-dorks', name:'Google / Bing Dorking', engines:['Google','Bing','DuckDuckGo','Yandex'],
-    insight:'The foundation of passive recon. Google dorking reveals exposed files, admin panels, error messages, and indexed secrets that have been crawled directly from the target. Combine multiple dorks for best results.',
-    dorks:[
-      {id:'g1',label:'All indexed subdomains',q:'site:*.{target}'},
-      {id:'g2',label:'Nested subdomains (multi-level)',q:'site:*.*.{target}'},
-      {id:'g3',label:'Staging / dev environments',q:'site:*.{target} inurl:staging | inurl:dev | inurl:test | inurl:uat | inurl:preprod'},
-      {id:'g4',label:'Admin & login panels',q:'site:{target} inurl:admin | inurl:login | inurl:portal | inurl:dashboard'},
-      {id:'g5',label:'Exposed config / env files',q:'site:{target} ext:env | ext:conf | ext:ini | ext:bak | ext:backup | ext:sh | ext:log'},
-      {id:'g6',label:'Exposed office / PDF docs',q:'site:{target} ext:pdf | ext:doc | ext:docx | ext:xls | ext:xlsx | ext:ppt | ext:pptx'},
-      {id:'g7',label:'SQL dumps & DB exports',q:'site:{target} ext:sql | ext:dump | ext:sql.gz intext:"INSERT INTO"'},
-      {id:'g8',label:'Private keys & certificates',q:'site:{target} ext:pem | ext:key | ext:crt | ext:cer | ext:p12 | ext:pfx'},
-      {id:'g9',label:'Open directory listings',q:'site:{target} intitle:"index of" "parent directory"'},
-      {id:'g10',label:'Swagger / API docs exposed',q:'site:{target} inurl:swagger | inurl:api-docs | intitle:"Swagger UI" | inurl:/api/v1'},
-      {id:'g11',label:'Exposed Kubernetes / Helm',q:'site:{target} ext:yaml | ext:yml intext:"apiVersion" | intext:"kind: Deployment"'},
-      {id:'g12',label:'SQL error messages',q:'site:{target} intext:"sql syntax" | intext:"mysql_fetch" | intext:"ORA-" | intext:"SQLSTATE"'},
-      {id:'g13',label:'Stack traces & exceptions',q:'site:{target} intitle:"exception" | intext:"stack trace" | intext:"unhandled exception"'},
-      {id:'g14',label:'PHP / ASP debug errors',q:'site:{target} intext:"undefined index" | intext:"Warning: include" | intext:"Parse error"'},
-      {id:'g15',label:'Redirect / SSRF params',q:'site:{target} inurl:url= | inurl:redirect= | inurl:next= | inurl:return= | inurl:redir= inurl:http'},
-      {id:'g16',label:'Confidential / internal docs',q:'site:{target} intitle:"confidential" | intitle:"internal use only" | intitle:"restricted"'},
-      {id:'g17',label:'Jenkins / CI dashboards',q:'site:{target} intitle:"Dashboard [Jenkins]" | inurl:jenkins'},
-      {id:'g18',label:'Kibana / Grafana panels',q:'site:{target} inurl:kibana | inurl:grafana | intitle:"Grafana"'},
-      {id:'g19',label:'Exposed phpMyAdmin',q:'site:{target} intitle:"phpMyAdmin" "Welcome to phpMyAdmin"'},
-      {id:'g20',label:'WordPress config & admin',q:'site:{target} inurl:wp-config.php | inurl:wp-admin | inurl:wp-login.php'},
-      {id:'g21',label:'Connection strings & DSNs',q:'site:{target} intext:"connectionString" | intext:"jdbc:mysql" | intext:"mongodb://" | intext:"postgres://"'},
-      {id:'g22',label:'Email addresses indexed',q:'site:{target} intext:"@{target}" filetype:txt | filetype:csv | filetype:xls'},
-      {id:'g23',label:'Cached & deleted pages',q:'cache:{target}'},
-      {id:'g24',label:'Related / similar sites',q:'related:{target}'},
-    ]
-  },
-  {
-    id:'shodan', name:'Shodan', engines:['Shodan'],
-    insight:'Shodan scans the internet continuously. Use org: or ssl: filters to pivot on the target organisation. Favicon hash pivoting finds assets not in any DNS record.',
-    dorks:[
-      {id:'sh1',label:'All hosts for org',q:'org:"{target}"'},
-      {id:'sh2',label:'Hosts by ASN',q:'asn:AS{target}'},
-      {id:'sh3',label:'Exposed MongoDB',q:'org:"{target}" port:27017 product:MongoDB'},
-      {id:'sh4',label:'Exposed Elasticsearch',q:'org:"{target}" port:9200 product:Elasticsearch'},
-      {id:'sh5',label:'Exposed Redis',q:'org:"{target}" port:6379 product:Redis'},
-      {id:'sh6',label:'Open Docker daemon',q:'org:"{target}" port:2375 product:Docker'},
-      {id:'sh7',label:'Kubernetes API server',q:'org:"{target}" port:6443 ssl.cert.subject.cn:kubernetes'},
-      {id:'sh8',label:'Exposed RDP (3389)',q:'org:"{target}" port:3389 os:windows'},
-      {id:'sh9',label:'Jenkins / CI exposed',q:'org:"{target}" http.title:"Dashboard [Jenkins]"'},
-      {id:'sh10',label:'Grafana dashboards',q:'org:"{target}" http.title:"Grafana" port:3000'},
-      {id:'sh11',label:'Exposed Jupyter notebooks',q:'org:"{target}" http.title:"Jupyter Notebook"'},
-      {id:'sh12',label:'SSL cert pivot (subdomain)',q:'ssl.cert.subject.cn:"*.{target}"'},
-      {id:'sh13',label:'SSL SAN pivot (all names)',q:'ssl:"*.{target}" 200'},
-      {id:'sh14',label:'Favicon hash pivot',q:'org:"{target}" http.favicon.hash:{hash}'},
-      {id:'sh15',label:'VPN / Citrix gateways',q:'org:"{target}" title:"Citrix Gateway" | title:"SSL VPN"'},
-      {id:'sh16',label:'Fortinet / Palo Alto VPN',q:'org:"{target}" ssl http.title:"SSL VPN" product:Fortinet'},
-      {id:'sh17',label:'Webcams & surveillance',q:'org:"{target}" port:554 | port:8080 title:"webcam"'},
-      {id:'sh18',label:'FTP anonymous login',q:'org:"{target}" port:21 "230 Login successful" "anonymous"'},
-      {id:'sh19',label:'SMTP / mail servers',q:'org:"{target}" port:25 product:Postfix | product:Exim'},
-      {id:'sh20',label:'Apache Tomcat exposed',q:'org:"{target}" http.title:"Apache Tomcat"'},
-      {id:'sh21',label:'Exposed Memcached',q:'org:"{target}" port:11211 product:Memcached'},
-      {id:'sh22',label:'MQTT IoT brokers',q:'org:"{target}" port:1883 product:MQTT'},
-    ]
-  },
-  {
-    id:'fofa', name:'FOFA', engines:['FOFA'],
-    insight:'FOFA is a Chinese internet asset search engine — excellent for finding Asian infrastructure, CDN origins, and assets missed by Shodan/Censys. Uses base64-encoded queries.',
-    dorks:[
-      {id:'fo1',label:'Domain header pivot',q:'domain="{target}"'},
-      {id:'fo2',label:'All subdomains via cert',q:'cert="{target}"'},
-      {id:'fo3',label:'IP range of org',q:'org="{target}"'},
-      {id:'fo4',label:'Title-based asset search',q:'title="{target}" && country="US"'},
-      {id:'fo5',label:'Exposed admin panels',q:'domain="{target}" && title="admin"'},
-      {id:'fo6',label:'Exposed databases',q:'domain="{target}" && port="27017"'},
-      {id:'fo7',label:'ICO favicon hash',q:'icon_hash="{hash}" && domain="{target}"'},
-      {id:'fo8',label:'App framework fingerprint',q:'body="X-Powered-By" && domain="{target}"'},
-      {id:'fo9',label:'Exposed login pages',q:'domain="{target}" && title="login"'},
-      {id:'fo10',label:'API endpoints via header',q:'domain="{target}" && header="api"'},
-      {id:'fo11',label:'Cloud storage buckets',q:'host=".s3.amazonaws.com" && body="{target}"'},
-      {id:'fo12',label:'Old / staging TLS certs',q:'cert.subject.cn="staging.{target}"'},
-    ]
-  },
-  {
-    id:'censys', name:'Censys', engines:['Censys'],
-    insight:'Censys provides the most accurate TLS certificate data for deep infrastructure mapping. The certificates.parsed.names field is gold for subdomain enumeration.',
-    dorks:[
-      {id:'ce1',label:'All hosts (parsed cert name)',q:'parsed.names: {target}'},
-      {id:'ce2',label:'Hosts by org name',q:'autonomous_system.organization: "{target}"'},
-      {id:'ce3',label:'ASN pivot',q:'autonomous_system.asn: {asn}'},
-      {id:'ce4',label:'Exposed services on port 443',q:'parsed.names: {target} AND protocols: "443/https"'},
-      {id:'ce5',label:'Self-signed certs (internal)',q:'parsed.names: {target} AND parsed.issuer.organization: {target}'},
-      {id:'ce6',label:'Expired certs (attack surface)',q:'parsed.names: {target} AND parsed.validity.end: [* TO "now"]'},
-      {id:'ce7',label:'Open databases',q:'autonomous_system.organization: "{target}" AND protocols: "27017/mongodb"'},
-      {id:'ce8',label:'Exposed Kubernetes',q:'autonomous_system.organization: "{target}" AND protocols: "6443/https"'},
-      {id:'ce9',label:'Wildcard cert pivot',q:'parsed.names: *.{target}'},
-      {id:'ce10',label:'Specific service fingerprint',q:'autonomous_system.organization: "{target}" AND services.service_name: "JENKINS"'},
-    ]
-  },
-  {
-    id:'greynoise', name:'GreyNoise', engines:['GreyNoise'],
-    insight:'GreyNoise classifies internet noise — use it to find IPs belonging to the target that are actively scanning or to verify asset ownership.',
-    dorks:[
-      {id:'gn1',label:'All IPs tagged to org',q:'metadata.organization:{target}'},
-      {id:'gn2',label:'RDNS pivot on domain',q:'metadata.rdns_parent:{target}'},
-      {id:'gn3',label:'Cloud provider pivot (AWS)',q:'metadata.organization:{target} metadata.cloud_provider:AWS'},
-      {id:'gn4',label:'IPs running scanners',q:'metadata.organization:{target} classification:malicious'},
-      {id:'gn5',label:'Tag-based search (VPN)',q:'tags:VPN metadata.organization:{target}'},
-      {id:'gn6',label:'Active HTTP servers',q:'metadata.organization:{target} raw_data.scan.port:80'},
-    ]
-  },
-  {
-    id:'github', name:'GitHub Code Search', engines:['GitHub','Grep.app'],
-    insight:'GitHub dorking is highest-ROI passive recon. Developers accidentally commit secrets, internal endpoint URLs, hardcoded credentials, and private infrastructure details to public repos.',
-    dorks:[
-      {id:'gh1',label:'API keys & secrets',q:'"{target}.com" "api_key" | "apikey" | "api_secret" | "access_token" | "secret_key"'},
-      {id:'gh2',label:'.env files committed',q:'"{target}" filename:.env "SECRET" | "PASSWORD" | "KEY" | "TOKEN"'},
-      {id:'gh3',label:'AWS credentials',q:'"{target}" "AKIA" "aws_access_key_id" | "aws_secret_access_key"'},
-      {id:'gh4',label:'Slack tokens',q:'"{target}" "xoxp-" | "xoxb-" | "xoxa-"'},
-      {id:'gh5',label:'Stripe live keys',q:'"{target}" "sk_live_" | "pk_live_"'},
-      {id:'gh6',label:'JWT secrets',q:'"{target}" "jwt_secret" | "JWT_SECRET" | "jwt_key" | "HS256"'},
-      {id:'gh7',label:'Database connection strings',q:'"{target}" "mongodb://" | "postgres://" | "mysql://" "password"'},
-      {id:'gh8',label:'Internal endpoints / URLs',q:'"{target}" "internal" | "staging" | "localhost" filename:*.js | *.ts | *.py'},
-      {id:'gh9',label:'Firebase / GCP configs',q:'"{target}" "apiKey" "databaseURL" | "storageBucket"'},
-      {id:'gh10',label:'SSH private keys',q:'"{target}" "BEGIN RSA PRIVATE KEY" | "BEGIN OPENSSH PRIVATE KEY"'},
-      {id:'gh11',label:'Config YAML / secrets',q:'"{target}" filename:config.yml | filename:secrets.yml "password" | "token"'},
-      {id:'gh12',label:'Terraform state files',q:'"{target}" filename:terraform.tfstate "access_key" | "secret"'},
-      {id:'gh13',label:'Docker compose with creds',q:'"{target}" filename:docker-compose.yml "POSTGRES_PASSWORD" | "MYSQL_ROOT_PASSWORD"'},
-      {id:'gh14',label:'Kubernetes secrets',q:'"{target}" filename:*.yaml kind: Secret "stringData"'},
-      {id:'gh15',label:'Hardcoded IPs / internal hosts',q:'"{target}" "10.0." | "192.168." | "172.16." filename:*.js | *.py | *.go'},
-      {id:'gh16',label:'Private NPM / PyPI tokens',q:'"{target}" "NPM_TOKEN" | "PYPI_TOKEN" | "TWINE_PASSWORD"'},
-      {id:'gh17',label:'SendGrid / Mailgun keys',q:'"{target}" "SG." | "key-" "mailgun" | "sendgrid"'},
-      {id:'gh18',label:'Grep.app full-text search',q:'"{target}" password | secret | token | key'},
-    ]
-  },
-  {
-    id:'gitlab', name:'GitLab & Bitbucket', engines:['GitLab'],
-    insight:'Many enterprises self-host GitLab or use Bitbucket. Public GitLab repos are indexed differently than GitHub — check both for target-specific leaks.',
-    dorks:[
-      {id:'gl1',label:'GitLab: org repos search',q:'{target} password | secret | api_key'},
-      {id:'gl2',label:'GitLab: .env files',q:'{target} filename:.env DB_PASSWORD'},
-      {id:'gl3',label:'GitLab: internal endpoints',q:'{target} "staging" | "internal" inurl:/blobs/'},
-      {id:'gl4',label:'Google: public GitLab repos',q:'site:gitlab.com "{target}" password | secret | api_key'},
-      {id:'gl5',label:'Google: public Bitbucket repos',q:'site:bitbucket.org "{target}" password | secret | key'},
-      {id:'gl6',label:'Pastebin & Gist leaks',q:'site:gist.github.com "{target}" | site:pastebin.com "{target}" password | key'},
-    ]
-  },
-  {
-    id:'intelx', name:'Intelligence X / OSINT Databases', engines:['IntelX'],
-    insight:'Intelligence X indexes dark web, leaked databases, Pastebin, breach data, and more. Use it to find target employee emails, credentials, and internal documents in historical breaches.',
-    dorks:[
-      {id:'ix1',label:'Domain in breach data',q:'{target}'},
-      {id:'ix2',label:'Email domain in leaks',q:'@{target}'},
-      {id:'ix3',label:'Target in dark web mentions',q:'"{target}" site:onion'},
-      {id:'ix4',label:'Google: paste sites for leaks',q:'site:pastebin.com | site:paste2.org | site:pastie.org "{target}" password'},
-      {id:'ix5',label:'Google: Ghostbin / Slexy',q:'site:ghostbin.co | site:slexy.org "{target}"'},
-      {id:'ix6',label:'Trello boards (public)',q:'site:trello.com "{target}" password | key | internal'},
-      {id:'ix7',label:'Notion pages (public)',q:'site:notion.so "{target}" internal | password | key'},
-      {id:'ix8',label:'Google Docs leaked',q:'site:docs.google.com inurl:/d/ "{target}" "anyone with the link"'},
-      {id:'ix9',label:'Confluence / Jira public',q:'site:{target} inurl:confluence | inurl:jira intitle:"Dashboard"'},
-      {id:'ix10',label:'Exposed Airtable / Coda bases',q:'site:airtable.com | site:coda.io "{target}"'},
-    ]
-  },
-  {
-    id:'ssl-certs', name:'SSL / TLS Certificate Recon', engines:['Google','Censys','Shodan'],
-    insight:'Certificate transparency logs are real-time — every cert issued for a domain is public. crt.sh is passive and legal. One of the best subdomain discovery methods in bug bounty.',
-    dorks:[
-      {id:'ssl1',label:'crt.sh — all certs for domain',q:'site:crt.sh "{target}"'},
-      {id:'ssl2',label:'crt.sh — wildcard certs',q:'site:crt.sh "*.{target}"'},
-      {id:'ssl3',label:'crt.sh — % wildcard (all subdomains)',q:'site:crt.sh "%.{target}"'},
-      {id:'ssl4',label:'Shodan SSL SAN names',q:'ssl:"*.{target}"'},
-      {id:'ssl5',label:'Shodan — expired certs (forgotten infra)',q:'ssl.cert.subject.cn:"{target}" ssl.cert.expired:true'},
-      {id:'ssl6',label:'Censys — parsed cert names',q:'parsed.names: {target} AND parsed.subject.organization: {target}'},
-      {id:'ssl7',label:'Google: CT logs indexed',q:'site:transparencyreport.google.com "{target}"'},
-    ]
-  },
-  {
-    id:'cloud-assets', name:'Cloud & Storage Asset Discovery', engines:['Google','Shodan'],
-    insight:'S3 buckets, Azure Blobs, and GCP Storage are common bug bounty findings. Misconfigured public buckets can expose PII, internal files, and API keys.',
-    dorks:[
-      {id:'cl1',label:'S3 buckets (direct)',q:'site:s3.amazonaws.com "{target}"'},
-      {id:'cl2',label:'S3 — confidential docs',q:'site:s3.amazonaws.com "{target}" "confidential" | "internal" | "backup"'},
-      {id:'cl3',label:'Azure Blob storage',q:'site:blob.core.windows.net "{target}"'},
-      {id:'cl4',label:'GCP Storage',q:'site:storage.googleapis.com "{target}"'},
-      {id:'cl5',label:'DigitalOcean Spaces',q:'site:digitaloceanspaces.com "{target}"'},
-      {id:'cl6',label:'Rackspace / Cloudfiles',q:'site:rackcdn.com "{target}"'},
-      {id:'cl7',label:'Shodan: open S3-like services',q:'org:"{target}" "AmazonS3" | "Azure" | "GCP" port:443'},
-      {id:'cl8',label:'CloudFront origin disclosure',q:'site:{target} intext:"cloudfront.net" | intext:"s3.amazonaws.com" inurl:src | inurl:href'},
-      {id:'cl9',label:'Firebase realtime database',q:'site:{target}-default-rtdb.firebaseio.com | site:{target}.firebaseapp.com'},
-      {id:'cl10',label:'Heroku apps',q:'site:{target}.herokuapp.com'},
-    ]
-  },
-  {
-    id:'wayback', name:'Wayback Machine & Historical Recon', engines:['Google'],
-    insight:'Wayback Machine indexes deleted pages, old admin panels, decommissioned subdomains and historical API versions — all without touching the live target. 100% passive.',
-    dorks:[
-      {id:'wb1',label:'All archived URLs for domain',q:'site:web.archive.org "{target}"'},
-      {id:'wb2',label:'Archived login pages',q:'site:web.archive.org "{target}" "login" | "admin" | "password"'},
-      {id:'wb3',label:'Old API versions archived',q:'site:web.archive.org "{target}/api/v1" | "{target}/api/v2"'},
-      {id:'wb4',label:'Archived env / config files',q:'site:web.archive.org "{target}" ".env" | "config.php" | "wp-config"'},
-      {id:'wb5',label:'Old subdomains in archives',q:'site:web.archive.org "*.{target}"'},
-      {id:'wb6',label:'Google cache of target pages',q:'cache:{target}/admin | cache:{target}/api'},
-      {id:'wb7',label:'CommonCrawl indexed data',q:'site:commoncrawl.org "{target}"'},
-    ]
-  },
-  {
-    id:'social-osint', name:'Social & Employee OSINT', engines:['Google','Bing'],
-    insight:'Employees post internal tool names, architecture details, and even credentials in LinkedIn posts, Twitter threads, and Stack Overflow answers. OSINT on people is often the fastest recon path.',
-    dorks:[
-      {id:'so1',label:'LinkedIn employees at target',q:'site:linkedin.com/in/ "{target}" | "{target}.com"'},
-      {id:'so2',label:'LinkedIn job posts (tech stack)',q:'site:linkedin.com/jobs "{target}" "engineer" | "developer" | "devops"'},
-      {id:'so3',label:'Twitter / X mentions of internal tools',q:'site:twitter.com | site:x.com "{target}" "internal" | "staging" | "bug"'},
-      {id:'so4',label:'Stack Overflow: tech stack clues',q:'site:stackoverflow.com "{target}" "api" | "library" | "framework"'},
-      {id:'so5',label:'Reddit: employee posts',q:'site:reddit.com "{target}" "we use" | "our stack" | "bug" | "vulnerability"'},
-      {id:'so6',label:'Glassdoor: tech stack in reviews',q:'site:glassdoor.com "{target}" "tech stack" | "tools we use"'},
-      {id:'so7',label:'Medium / Dev.to: engineering blogs',q:'site:medium.com | site:dev.to "{target}" "engineering" | "infrastructure" | "architecture"'},
-      {id:'so8',label:'YouTube: conference / demo talks',q:'site:youtube.com "{target}" "architecture" | "infrastructure" | "internal tools"'},
-      {id:'so9',label:'HackerNews: company mentions',q:'site:news.ycombinator.com "{target}"'},
-    ]
-  },
-  {
-    id:'metadata', name:'Document Metadata & File Intelligence', engines:['Google','Bing'],
-    insight:'Office docs and PDFs contain hidden metadata: author names, internal hostnames, email addresses, software versions, and revision history.',
-    dorks:[
-      {id:'me1',label:'PDFs with metadata clues',q:'site:{target} filetype:pdf intext:"Author" | intext:"Creator" | intext:"Company"'},
-      {id:'me2',label:'Word docs (internal paths)',q:'site:{target} filetype:doc | filetype:docx intext:"C:\\\\Users\\\\" | intext:"D:\\\\Projects\\\\"'},
-      {id:'me3',label:'PowerPoint presentations',q:'site:{target} filetype:ppt | filetype:pptx intext:"internal" | intext:"confidential"'},
-      {id:'me4',label:'Excel with employee data',q:'site:{target} filetype:xls | filetype:xlsx intext:"email" | intext:"phone" | intext:"salary"'},
-      {id:'me5',label:'AutoCAD / Visio files (infra)',q:'site:{target} filetype:dwg | filetype:vsdx | filetype:vsd'},
-      {id:'me6',label:'Project files (MS Project)',q:'site:{target} filetype:mpp | filetype:mpt intext:"task" | intext:"resource"'},
-    ]
-  },
-  {
-    id:'bug-bounty-discovery', name:'Bug Bounty Program & Scope Discovery', engines:['Google','Bing'],
-    insight:'Finding private / unlisted bug bounty programs gives you a less competitive attack surface. security.txt is the standard — most Fortune 500s have one.',
-    dorks:[
-      {id:'bb1',label:'security.txt files',q:'site:{target} inurl:/.well-known/security.txt | inurl:/security.txt'},
-      {id:'bb2',label:'Bug bounty & disclosure pages',q:'site:{target} intitle:"bug bounty" | intitle:"responsible disclosure" | intitle:"vulnerability disclosure"'},
-      {id:'bb3',label:'HackerOne embedded forms',q:'"powered by hackerone" site:{target}'},
-      {id:'bb4',label:'Bugcrowd embedded forms',q:'"powered by bugcrowd" site:{target}'},
-      {id:'bb5',label:'PDF bounty policies',q:'site:{target} filetype:pdf intitle:"vulnerability disclosure policy" | intitle:"bug bounty"'},
-      {id:'bb6',label:'Hall of fame (self-hosted)',q:'site:{target} intitle:"hall of fame" | intitle:"security researchers" | intitle:"acknowledgements"'},
-      {id:'bb7',label:'Private program hints',q:'"apply to join" "private program" "{target}"'},
-    ]
-  },
-];
+  var CATS = [
+    {
+      id:'google-dorks', name:'Google / Bing Dorking', engines:['Google','Bing','DuckDuckGo','Yandex'],
+      insight:'The foundation of passive recon. Google dorking reveals exposed files, admin panels, error messages, and indexed secrets that have been crawled directly from the target.',
+      dorks:[
+        {id:'g1',label:'All indexed subdomains',q:'site:*.{target}'},
+        {id:'g2',label:'Nested subdomains (multi-level)',q:'site:*.*.{target}'},
+        {id:'g3',label:'Staging / dev environments',q:'site:*.{target} inurl:staging | inurl:dev | inurl:test | inurl:uat | inurl:preprod'},
+        {id:'g4',label:'Admin & login panels',q:'site:{target} inurl:admin | inurl:login | inurl:portal | inurl:dashboard'},
+        {id:'g5',label:'Exposed config / env files',q:'site:{target} ext:env | ext:conf | ext:ini | ext:bak | ext:backup | ext:sh | ext:log'},
+        {id:'g6',label:'Exposed office / PDF docs',q:'site:{target} ext:pdf | ext:doc | ext:docx | ext:xls | ext:xlsx | ext:ppt | ext:pptx'},
+        {id:'g7',label:'SQL dumps & DB exports',q:'site:{target} ext:sql | ext:dump | ext:sql.gz intext:"INSERT INTO"'},
+        {id:'g8',label:'Private keys & certificates',q:'site:{target} ext:pem | ext:key | ext:crt | ext:cer | ext:p12 | ext:pfx'},
+        {id:'g9',label:'Open directory listings',q:'site:{target} intitle:"index of" "parent directory"'},
+        {id:'g10',label:'Swagger / API docs exposed',q:'site:{target} inurl:swagger | inurl:api-docs | intitle:"Swagger UI" | inurl:/api/v1'},
+        {id:'g11',label:'Exposed Kubernetes / Helm',q:'site:{target} ext:yaml | ext:yml intext:"apiVersion" | intext:"kind: Deployment"'},
+        {id:'g12',label:'SQL error messages',q:'site:{target} intext:"sql syntax" | intext:"mysql_fetch" | intext:"ORA-" | intext:"SQLSTATE"'},
+        {id:'g13',label:'Stack traces & exceptions',q:'site:{target} intitle:"exception" | intext:"stack trace" | intext:"unhandled exception"'},
+        {id:'g14',label:'PHP / ASP debug errors',q:'site:{target} intext:"undefined index" | intext:"Warning: include" | intext:"Parse error"'},
+        {id:'g15',label:'Redirect / SSRF params',q:'site:{target} inurl:url= | inurl:redirect= | inurl:next= | inurl:return= | inurl:redir= inurl:http'},
+        {id:'g16',label:'Confidential / internal docs',q:'site:{target} intitle:"confidential" | intitle:"internal use only" | intitle:"restricted"'},
+        {id:'g17',label:'Jenkins / CI dashboards',q:'site:{target} intitle:"Dashboard [Jenkins]" | inurl:jenkins'},
+        {id:'g18',label:'Kibana / Grafana panels',q:'site:{target} inurl:kibana | inurl:grafana | intitle:"Grafana"'},
+        {id:'g19',label:'Exposed phpMyAdmin',q:'site:{target} intitle:"phpMyAdmin" "Welcome to phpMyAdmin"'},
+        {id:'g20',label:'WordPress config & admin',q:'site:{target} inurl:wp-config.php | inurl:wp-admin | inurl:wp-login.php'},
+        {id:'g21',label:'Connection strings & DSNs',q:'site:{target} intext:"connectionString" | intext:"jdbc:mysql" | intext:"mongodb://" | intext:"postgres://"'},
+        {id:'g22',label:'Email addresses indexed',q:'site:{target} intext:"@{target}" filetype:txt | filetype:csv | filetype:xls'},
+        {id:'g23',label:'Cached & deleted pages',q:'cache:{target}'},
+        {id:'g24',label:'Related / similar sites',q:'related:{target}'}
+      ]
+    },
+    {
+      id:'shodan', name:'Shodan', engines:['Shodan'],
+      insight:'Shodan scans the internet continuously. Use org: or ssl: filters to pivot on the target organisation. Favicon hash pivoting finds assets not in any DNS record.',
+      dorks:[
+        {id:'sh1',label:'All hosts for org',q:'org:"{target}"'},
+        {id:'sh2',label:'Hosts by ASN',q:'asn:AS{target}'},
+        {id:'sh3',label:'Exposed MongoDB',q:'org:"{target}" port:27017 product:MongoDB'},
+        {id:'sh4',label:'Exposed Elasticsearch',q:'org:"{target}" port:9200 product:Elasticsearch'},
+        {id:'sh5',label:'Exposed Redis',q:'org:"{target}" port:6379 product:Redis'},
+        {id:'sh6',label:'Open Docker daemon',q:'org:"{target}" port:2375 product:Docker'},
+        {id:'sh7',label:'Kubernetes API server',q:'org:"{target}" port:6443 ssl.cert.subject.cn:kubernetes'},
+        {id:'sh8',label:'Exposed RDP (3389)',q:'org:"{target}" port:3389 os:windows'},
+        {id:'sh9',label:'Jenkins / CI exposed',q:'org:"{target}" http.title:"Dashboard [Jenkins]"'},
+        {id:'sh10',label:'Grafana dashboards',q:'org:"{target}" http.title:"Grafana" port:3000'},
+        {id:'sh11',label:'Exposed Jupyter notebooks',q:'org:"{target}" http.title:"Jupyter Notebook"'},
+        {id:'sh12',label:'SSL cert pivot (subdomain)',q:'ssl.cert.subject.cn:"*.{target}"'},
+        {id:'sh13',label:'SSL SAN pivot (all names)',q:'ssl:"*.{target}" 200'},
+        {id:'sh14',label:'Favicon hash pivot',q:'org:"{target}" http.favicon.hash:{hash}'},
+        {id:'sh15',label:'VPN / Citrix gateways',q:'org:"{target}" title:"Citrix Gateway" | title:"SSL VPN"'},
+        {id:'sh16',label:'Fortinet / Palo Alto VPN',q:'org:"{target}" ssl http.title:"SSL VPN" product:Fortinet'},
+        {id:'sh17',label:'Webcams & surveillance',q:'org:"{target}" port:554 | port:8080 title:"webcam"'},
+        {id:'sh18',label:'FTP anonymous login',q:'org:"{target}" port:21 "230 Login successful" "anonymous"'},
+        {id:'sh19',label:'SMTP / mail servers',q:'org:"{target}" port:25 product:Postfix | product:Exim'},
+        {id:'sh20',label:'Apache Tomcat exposed',q:'org:"{target}" http.title:"Apache Tomcat"'},
+        {id:'sh21',label:'Exposed Memcached',q:'org:"{target}" port:11211 product:Memcached'},
+        {id:'sh22',label:'MQTT IoT brokers',q:'org:"{target}" port:1883 product:MQTT'}
+      ]
+    },
+    {
+      id:'fofa', name:'FOFA', engines:['FOFA'],
+      insight:'FOFA is a Chinese internet asset search engine \u2014 excellent for finding Asian infrastructure, CDN origins, and assets missed by Shodan/Censys.',
+      dorks:[
+        {id:'fo1',label:'Domain header pivot',q:'domain="{target}"'},
+        {id:'fo2',label:'All subdomains via cert',q:'cert="{target}"'},
+        {id:'fo3',label:'IP range of org',q:'org="{target}"'},
+        {id:'fo4',label:'Title-based asset search',q:'title="{target}" && country="US"'},
+        {id:'fo5',label:'Exposed admin panels',q:'domain="{target}" && title="admin"'},
+        {id:'fo6',label:'Exposed databases',q:'domain="{target}" && port="27017"'},
+        {id:'fo7',label:'ICO favicon hash',q:'icon_hash="{hash}" && domain="{target}"'},
+        {id:'fo8',label:'App framework fingerprint',q:'body="X-Powered-By" && domain="{target}"'},
+        {id:'fo9',label:'Exposed login pages',q:'domain="{target}" && title="login"'},
+        {id:'fo10',label:'API endpoints via header',q:'domain="{target}" && header="api"'},
+        {id:'fo11',label:'Cloud storage buckets',q:'host=".s3.amazonaws.com" && body="{target}"'},
+        {id:'fo12',label:'Old / staging TLS certs',q:'cert.subject.cn="staging.{target}"'}
+      ]
+    },
+    {
+      id:'censys', name:'Censys', engines:['Censys'],
+      insight:'Censys provides the most accurate TLS certificate data for deep infrastructure mapping. The certificates.parsed.names field is gold for subdomain enumeration.',
+      dorks:[
+        {id:'ce1',label:'All hosts (parsed cert name)',q:'parsed.names: {target}'},
+        {id:'ce2',label:'Hosts by org name',q:'autonomous_system.organization: "{target}"'},
+        {id:'ce3',label:'ASN pivot',q:'autonomous_system.asn: {asn}'},
+        {id:'ce4',label:'Exposed services on port 443',q:'parsed.names: {target} AND protocols: "443/https"'},
+        {id:'ce5',label:'Self-signed certs (internal)',q:'parsed.names: {target} AND parsed.issuer.organization: {target}'},
+        {id:'ce6',label:'Expired certs (attack surface)',q:'parsed.names: {target} AND parsed.validity.end: [* TO "now"]'},
+        {id:'ce7',label:'Open databases',q:'autonomous_system.organization: "{target}" AND protocols: "27017/mongodb"'},
+        {id:'ce8',label:'Exposed Kubernetes',q:'autonomous_system.organization: "{target}" AND protocols: "6443/https"'},
+        {id:'ce9',label:'Wildcard cert pivot',q:'parsed.names: *.{target}'},
+        {id:'ce10',label:'Specific service fingerprint',q:'autonomous_system.organization: "{target}" AND services.service_name: "JENKINS"'}
+      ]
+    },
+    {
+      id:'greynoise', name:'GreyNoise', engines:['GreyNoise'],
+      insight:'GreyNoise classifies internet noise \u2014 use it to find IPs belonging to the target that are actively scanning or to verify asset ownership.',
+      dorks:[
+        {id:'gn1',label:'All IPs tagged to org',q:'metadata.organization:{target}'},
+        {id:'gn2',label:'RDNS pivot on domain',q:'metadata.rdns_parent:{target}'},
+        {id:'gn3',label:'Cloud provider pivot (AWS)',q:'metadata.organization:{target} metadata.cloud_provider:AWS'},
+        {id:'gn4',label:'IPs running scanners',q:'metadata.organization:{target} classification:malicious'},
+        {id:'gn5',label:'Tag-based search (VPN)',q:'tags:VPN metadata.organization:{target}'},
+        {id:'gn6',label:'Active HTTP servers',q:'metadata.organization:{target} raw_data.scan.port:80'}
+      ]
+    },
+    {
+      id:'github', name:'GitHub Code Search', engines:['GitHub','Grep.app'],
+      insight:'GitHub dorking is highest-ROI passive recon. Developers accidentally commit secrets, internal endpoint URLs, hardcoded credentials, and private infrastructure details to public repos.',
+      dorks:[
+        {id:'gh1',label:'API keys & secrets',q:'"{target}.com" "api_key" | "apikey" | "api_secret" | "access_token" | "secret_key"'},
+        {id:'gh2',label:'.env files committed',q:'"{target}" filename:.env "SECRET" | "PASSWORD" | "KEY" | "TOKEN"'},
+        {id:'gh3',label:'AWS credentials',q:'"{target}" "AKIA" "aws_access_key_id" | "aws_secret_access_key"'},
+        {id:'gh4',label:'Slack tokens',q:'"{target}" "xoxp-" | "xoxb-" | "xoxa-"'},
+        {id:'gh5',label:'Stripe live keys',q:'"{target}" "sk_live_" | "pk_live_"'},
+        {id:'gh6',label:'JWT secrets',q:'"{target}" "jwt_secret" | "JWT_SECRET" | "jwt_key" | "HS256"'},
+        {id:'gh7',label:'Database connection strings',q:'"{target}" "mongodb://" | "postgres://" | "mysql://" "password"'},
+        {id:'gh8',label:'Internal endpoints / URLs',q:'"{target}" "internal" | "staging" | "localhost" filename:*.js | *.ts | *.py'},
+        {id:'gh9',label:'Firebase / GCP configs',q:'"{target}" "apiKey" "databaseURL" | "storageBucket"'},
+        {id:'gh10',label:'SSH private keys',q:'"{target}" "BEGIN RSA PRIVATE KEY" | "BEGIN OPENSSH PRIVATE KEY"'},
+        {id:'gh11',label:'Config YAML / secrets',q:'"{target}" filename:config.yml | filename:secrets.yml "password" | "token"'},
+        {id:'gh12',label:'Terraform state files',q:'"{target}" filename:terraform.tfstate "access_key" | "secret"'},
+        {id:'gh13',label:'Docker compose with creds',q:'"{target}" filename:docker-compose.yml "POSTGRES_PASSWORD" | "MYSQL_ROOT_PASSWORD"'},
+        {id:'gh14',label:'Kubernetes secrets',q:'"{target}" filename:*.yaml kind: Secret "stringData"'},
+        {id:'gh15',label:'Hardcoded IPs / internal hosts',q:'"{target}" "10.0." | "192.168." | "172.16." filename:*.js | *.py | *.go'},
+        {id:'gh16',label:'Private NPM / PyPI tokens',q:'"{target}" "NPM_TOKEN" | "PYPI_TOKEN" | "TWINE_PASSWORD"'},
+        {id:'gh17',label:'SendGrid / Mailgun keys',q:'"{target}" "SG." | "key-" "mailgun" | "sendgrid"'},
+        {id:'gh18',label:'Grep.app full-text search',q:'"{target}" password | secret | token | key'}
+      ]
+    },
+    {
+      id:'gitlab', name:'GitLab & Bitbucket', engines:['GitLab'],
+      insight:'Many enterprises self-host GitLab or use Bitbucket. Public GitLab repos are indexed differently than GitHub \u2014 check both for target-specific leaks.',
+      dorks:[
+        {id:'gl1',label:'GitLab: org repos search',q:'{target} password | secret | api_key'},
+        {id:'gl2',label:'GitLab: .env files',q:'{target} filename:.env DB_PASSWORD'},
+        {id:'gl3',label:'GitLab: internal endpoints',q:'{target} "staging" | "internal" inurl:/blobs/'},
+        {id:'gl4',label:'Google: public GitLab repos',q:'site:gitlab.com "{target}" password | secret | api_key'},
+        {id:'gl5',label:'Google: public Bitbucket repos',q:'site:bitbucket.org "{target}" password | secret | key'},
+        {id:'gl6',label:'Pastebin & Gist leaks',q:'site:gist.github.com "{target}" | site:pastebin.com "{target}" password | key'}
+      ]
+    },
+    {
+      id:'intelx', name:'Intelligence X / OSINT Databases', engines:['IntelX'],
+      insight:'Intelligence X indexes dark web, leaked databases, Pastebin, breach data, and more. Find target employee emails, credentials, and internal documents in historical breaches.',
+      dorks:[
+        {id:'ix1',label:'Domain in breach data',q:'{target}'},
+        {id:'ix2',label:'Email domain in leaks',q:'@{target}'},
+        {id:'ix3',label:'Target in dark web mentions',q:'"{target}" site:onion'},
+        {id:'ix4',label:'Google: paste sites for leaks',q:'site:pastebin.com | site:paste2.org | site:pastie.org "{target}" password'},
+        {id:'ix5',label:'Google: Ghostbin / Slexy',q:'site:ghostbin.co | site:slexy.org "{target}"'},
+        {id:'ix6',label:'Trello boards (public)',q:'site:trello.com "{target}" password | key | internal'},
+        {id:'ix7',label:'Notion pages (public)',q:'site:notion.so "{target}" internal | password | key'},
+        {id:'ix8',label:'Google Docs leaked',q:'site:docs.google.com inurl:/d/ "{target}" "anyone with the link"'},
+        {id:'ix9',label:'Confluence / Jira public',q:'site:{target} inurl:confluence | inurl:jira intitle:"Dashboard"'},
+        {id:'ix10',label:'Exposed Airtable / Coda bases',q:'site:airtable.com | site:coda.io "{target}"'}
+      ]
+    },
+    {
+      id:'ssl-certs', name:'SSL / TLS Certificate Recon', engines:['Google','Censys','Shodan'],
+      insight:'Certificate transparency logs are real-time \u2014 every cert issued for a domain is public. crt.sh is passive and legal. One of the best subdomain discovery methods.',
+      dorks:[
+        {id:'ssl1',label:'crt.sh \u2014 all certs for domain',q:'site:crt.sh "{target}"'},
+        {id:'ssl2',label:'crt.sh \u2014 wildcard certs',q:'site:crt.sh "*.{target}"'},
+        {id:'ssl3',label:'crt.sh \u2014 % wildcard (all subdomains)',q:'site:crt.sh "%.{target}"'},
+        {id:'ssl4',label:'Shodan SSL SAN names',q:'ssl:"*.{target}"'},
+        {id:'ssl5',label:'Shodan \u2014 expired certs (forgotten infra)',q:'ssl.cert.subject.cn:"{target}" ssl.cert.expired:true'},
+        {id:'ssl6',label:'Censys \u2014 parsed cert names',q:'parsed.names: {target} AND parsed.subject.organization: {target}'},
+        {id:'ssl7',label:'Google: CT logs indexed',q:'site:transparencyreport.google.com "{target}"'}
+      ]
+    },
+    {
+      id:'cloud-assets', name:'Cloud & Storage Asset Discovery', engines:['Google','Shodan'],
+      insight:'S3 buckets, Azure Blobs, and GCP Storage are common bug bounty findings. Misconfigured public buckets can expose PII, internal files, and API keys.',
+      dorks:[
+        {id:'cl1',label:'S3 buckets (direct)',q:'site:s3.amazonaws.com "{target}"'},
+        {id:'cl2',label:'S3 \u2014 confidential docs',q:'site:s3.amazonaws.com "{target}" "confidential" | "internal" | "backup"'},
+        {id:'cl3',label:'Azure Blob storage',q:'site:blob.core.windows.net "{target}"'},
+        {id:'cl4',label:'GCP Storage',q:'site:storage.googleapis.com "{target}"'},
+        {id:'cl5',label:'DigitalOcean Spaces',q:'site:digitaloceanspaces.com "{target}"'},
+        {id:'cl6',label:'Rackspace / Cloudfiles',q:'site:rackcdn.com "{target}"'},
+        {id:'cl7',label:'Shodan: open S3-like services',q:'org:"{target}" "AmazonS3" | "Azure" | "GCP" port:443'},
+        {id:'cl8',label:'CloudFront origin disclosure',q:'site:{target} intext:"cloudfront.net" | intext:"s3.amazonaws.com" inurl:src | inurl:href'},
+        {id:'cl9',label:'Firebase realtime database',q:'site:{target}-default-rtdb.firebaseio.com | site:{target}.firebaseapp.com'},
+        {id:'cl10',label:'Heroku apps',q:'site:{target}.herokuapp.com'}
+      ]
+    },
+    {
+      id:'wayback', name:'Wayback Machine & Historical Recon', engines:['Google'],
+      insight:'Wayback Machine indexes deleted pages, old admin panels, decommissioned subdomains and historical API versions \u2014 all without touching the live target. 100% passive.',
+      dorks:[
+        {id:'wb1',label:'All archived URLs for domain',q:'site:web.archive.org "{target}"'},
+        {id:'wb2',label:'Archived login pages',q:'site:web.archive.org "{target}" "login" | "admin" | "password"'},
+        {id:'wb3',label:'Old API versions archived',q:'site:web.archive.org "{target}/api/v1" | "{target}/api/v2"'},
+        {id:'wb4',label:'Archived env / config files',q:'site:web.archive.org "{target}" ".env" | "config.php" | "wp-config"'},
+        {id:'wb5',label:'Old subdomains in archives',q:'site:web.archive.org "*.{target}"'},
+        {id:'wb6',label:'Google cache of target pages',q:'cache:{target}/admin | cache:{target}/api'},
+        {id:'wb7',label:'CommonCrawl indexed data',q:'site:commoncrawl.org "{target}"'}
+      ]
+    },
+    {
+      id:'social-osint', name:'Social & Employee OSINT', engines:['Google','Bing'],
+      insight:'Employees post internal tool names, architecture details, and even credentials in LinkedIn posts, Twitter threads, and Stack Overflow answers.',
+      dorks:[
+        {id:'so1',label:'LinkedIn employees at target',q:'site:linkedin.com/in/ "{target}" | "{target}.com"'},
+        {id:'so2',label:'LinkedIn job posts (tech stack)',q:'site:linkedin.com/jobs "{target}" "engineer" | "developer" | "devops"'},
+        {id:'so3',label:'Twitter / X mentions',q:'site:twitter.com | site:x.com "{target}" "internal" | "staging" | "bug"'},
+        {id:'so4',label:'Stack Overflow: tech stack clues',q:'site:stackoverflow.com "{target}" "api" | "library" | "framework"'},
+        {id:'so5',label:'Reddit: employee posts',q:'site:reddit.com "{target}" "we use" | "our stack" | "bug" | "vulnerability"'},
+        {id:'so6',label:'Glassdoor: tech stack in reviews',q:'site:glassdoor.com "{target}" "tech stack" | "tools we use"'},
+        {id:'so7',label:'Medium / Dev.to: engineering blogs',q:'site:medium.com | site:dev.to "{target}" "engineering" | "infrastructure" | "architecture"'},
+        {id:'so8',label:'YouTube: conference / demo talks',q:'site:youtube.com "{target}" "architecture" | "infrastructure" | "internal tools"'},
+        {id:'so9',label:'HackerNews: company mentions',q:'site:news.ycombinator.com "{target}"'}
+      ]
+    },
+    {
+      id:'metadata', name:'Document Metadata & File Intelligence', engines:['Google','Bing'],
+      insight:'Office docs and PDFs contain hidden metadata: author names, internal hostnames, email addresses, software versions, and revision history.',
+      dorks:[
+        {id:'me1',label:'PDFs with metadata clues',q:'site:{target} filetype:pdf intext:"Author" | intext:"Creator" | intext:"Company"'},
+        {id:'me2',label:'Word docs (internal paths)',q:'site:{target} filetype:doc | filetype:docx intext:"C:\\\\Users\\\\" | intext:"D:\\\\Projects\\\\"'},
+        {id:'me3',label:'PowerPoint presentations',q:'site:{target} filetype:ppt | filetype:pptx intext:"internal" | intext:"confidential"'},
+        {id:'me4',label:'Excel with employee data',q:'site:{target} filetype:xls | filetype:xlsx intext:"email" | intext:"phone" | intext:"salary"'},
+        {id:'me5',label:'AutoCAD / Visio files (infra)',q:'site:{target} filetype:dwg | filetype:vsdx | filetype:vsd'},
+        {id:'me6',label:'Project files (MS Project)',q:'site:{target} filetype:mpp | filetype:mpt intext:"task" | intext:"resource"'}
+      ]
+    },
+    {
+      id:'bug-bounty-discovery', name:'Bug Bounty Program & Scope Discovery', engines:['Google','Bing'],
+      insight:'Finding private / unlisted bug bounty programs gives you a less competitive attack surface. security.txt is the standard.',
+      dorks:[
+        {id:'bb1',label:'security.txt files',q:'site:{target} inurl:/.well-known/security.txt | inurl:/security.txt'},
+        {id:'bb2',label:'Bug bounty & disclosure pages',q:'site:{target} intitle:"bug bounty" | intitle:"responsible disclosure" | intitle:"vulnerability disclosure"'},
+        {id:'bb3',label:'HackerOne embedded forms',q:'"powered by hackerone" site:{target}'},
+        {id:'bb4',label:'Bugcrowd embedded forms',q:'"powered by bugcrowd" site:{target}'},
+        {id:'bb5',label:'PDF bounty policies',q:'site:{target} filetype:pdf intitle:"vulnerability disclosure policy" | intitle:"bug bounty"'},
+        {id:'bb6',label:'Hall of fame (self-hosted)',q:'site:{target} intitle:"hall of fame" | intitle:"security researchers" | intitle:"acknowledgements"'},
+        {id:'bb7',label:'Private program hints',q:'"apply to join" "private program" "{target}"'}
+      ]
+    }
+  ];
 
-let checked = {};
-let filterActive = false;
+  var checked = {};
+  var filterActive = false;
 
-function fillDork(q) {
-  const t = document.getElementById('target-input').value.trim() || '{target}';
-  return q.replace(/\{target\}/g, t);
-}
+  function fillDork(q) {
+    var t = document.getElementById('target-input').value.trim() || '{target}';
+    return q.replace(/\{target\}/g, t);
+  }
 
-function getEngine() { return document.getElementById('engine-select').value; }
-function getSearch() { return document.getElementById('search-input').value.toLowerCase(); }
-function totalDorks() { return CATS.reduce((a,c) => a + c.dorks.length, 0); }
-function checkedCount() { return Object.values(checked).filter(Boolean).length; }
+  function getEngine() { return document.getElementById('engine-select').value; }
+  function getSearch() { return document.getElementById('search-input').value.toLowerCase(); }
+  function totalDorks() { var n=0; CATS.forEach(function(c){n+=c.dorks.length;}); return n; }
+  function checkedCount() { var n=0; for(var k in checked){if(checked[k])n++;} return n; }
 
-function updateProgress() {
-  const tot = totalDorks(), done = checkedCount();
-  const pct = tot ? Math.round(done/tot*100) : 0;
-  document.getElementById('prog-fill').style.width = pct+'%';
-  document.getElementById('prog-count').textContent = `${done} / ${tot} complete`;
-  document.getElementById('stat-pct').textContent = pct+'%';
-  document.getElementById('stat-total').textContent = tot;
-  document.getElementById('stat-cats').textContent = CATS.length;
-}
+  function updateProgress() {
+    var tot = totalDorks(), done = checkedCount();
+    var pct = tot ? Math.round(done/tot*100) : 0;
+    document.getElementById('prog-fill').style.width = pct+'%';
+    document.getElementById('prog-count').textContent = done + ' / ' + tot + ' complete';
+    document.getElementById('stat-pct').textContent = pct+'%';
+    document.getElementById('stat-total').textContent = tot;
+    document.getElementById('stat-cats').textContent = CATS.length;
+  }
 
-function toggleFilter() {
-  filterActive = !filterActive;
-  document.getElementById('filter-btn').classList.toggle('active', filterActive);
-  render();
-}
+  function toggleFilter() {
+    filterActive = !filterActive;
+    document.getElementById('filter-btn').classList.toggle('active', filterActive);
+    render();
+  }
 
-function resetAll() { checked = {}; render(); updateProgress(); }
+  function resetAll() { checked = {}; filterActive = false; document.getElementById('filter-btn').classList.remove('active'); render(); }
 
-function copyDork(q, id) {
-  navigator.clipboard.writeText(fillDork(q)).then(() => {
-    const btn = document.getElementById('copy-'+id);
-    if(!btn) return;
-    const orig = btn.textContent;
-    btn.textContent = 'Copied';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
-  });
-}
-
-function openDork(q) {
-  const eng = getEngine();
-  const url = ENGINE_URLS[eng]?.(fillDork(q));
-  if(url) window.open(url,'_blank');
-}
-
-function toggleCat(id) {
-  const body = document.getElementById('body-'+id);
-  const chev = document.getElementById('chev-'+id);
-  if(!body) return;
-  const open = body.style.display !== 'none';
-  body.style.display = open ? 'none' : 'block';
-  chev.classList.toggle('open', !open);
-}
-
-function toggleCheck(id) {
-  checked[id] = !checked[id];
-  render();
-}
-
-function render() {
-  const search = getSearch();
-  const container = document.getElementById('categories');
-  container.innerHTML = '';
-
-  CATS.forEach(cat => {
-    const filtered = cat.dorks.filter(d => {
-      const matchSearch = !search || d.label.toLowerCase().includes(search) || d.q.toLowerCase().includes(search);
-      const matchFilter = !filterActive || !checked[d.id];
-      return matchSearch && matchFilter;
+  function copyDork(q, id) {
+    navigator.clipboard.writeText(fillDork(q)).then(function() {
+      var btn = document.getElementById('copy-'+id);
+      if(!btn) return;
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
     });
-    if(!filtered.length) return;
+  }
 
-    const catDone = cat.dorks.filter(d => checked[d.id]).length;
-    const catPct = Math.round(catDone/cat.dorks.length*100);
+  function openDork(q, engine) {
+    var eng = engine || getEngine();
+    var fn = ENGINE_URLS[eng];
+    if(fn) window.open(fn(fillDork(q)), '_blank');
+  }
 
-    const engTags = cat.engines.map(e => {
-      const c = ENGINE_COLORS[e] || '#888';
-      return `<span class="eng-tag" style="background:${c}18;color:${c};border:1px solid ${c}44">${e}</span>`;
-    }).join('');
+  function openAllChecked() {
+    var eng = getEngine();
+    var count = 0;
+    CATS.forEach(function(cat) {
+      cat.dorks.forEach(function(d) {
+        if(checked[d.id]) {
+          count++;
+          if(count <= 15) openDork(d.q, eng);
+        }
+      });
+    });
+    if(count > 15) alert('Opened first 15 tabs. Browser may block more popups.');
+    if(count === 0) alert('No techniques checked. Check some first, then click Open Checked.');
+  }
 
-    const dorkRows = filtered.map(d => {
-      const done = checked[d.id];
-      const filled = fillDork(d.q);
-      const escapedQ = d.q.replace(/'/g, "\\'");
-      return `<div class="dork-row${done?' done':''}" id="row-${d.id}">
-        <input type="checkbox" class="dork-check" ${done?'checked':''} onchange="toggleCheck('${d.id}')"/>
-        <div class="dork-info">
-          <div class="dork-label">${d.label}</div>
-          <div class="dork-query">${filled}</div>
-        </div>
-        <div class="dork-actions">
-          <button class="dork-btn" id="copy-${d.id}" onclick="copyDork('${escapedQ}','${d.id}')">Copy</button>
-          <button class="dork-btn open-btn" onclick="openDork('${escapedQ}')">Open</button>
-        </div>
-      </div>`;
-    }).join('');
+  function selectAllCat(catId) {
+    var cat = CATS.find(function(c){return c.id===catId;});
+    if(!cat) return;
+    var allChecked = cat.dorks.every(function(d){return checked[d.id];});
+    cat.dorks.forEach(function(d){ checked[d.id] = !allChecked; });
+    render();
+  }
 
-    container.innerHTML += `
-      <div class="cat-card">
-        <div class="cat-header" onclick="toggleCat('${cat.id}')">
-          <span class="cat-name">${cat.name}</span>
-          <div class="cat-engines">${engTags}</div>
-          <span class="cat-prog">${catDone}/${cat.dorks.length}</span>
-          <span class="cat-chevron open" id="chev-${cat.id}">&#9650;</span>
-        </div>
-        <div class="cat-body" id="body-${cat.id}">
-          <div class="cat-insight"><span class="cat-insight-icon">&#9432;</span>${cat.insight}</div>
-          <div class="cat-subprog"><div class="cat-subprog-fill" style="width:${catPct}%"></div></div>
-          ${dorkRows}
-        </div>
-      </div>`;
+  function openAllCat(catId) {
+    var cat = CATS.find(function(c){return c.id===catId;});
+    if(!cat) return;
+    var eng = getEngine();
+    var count = 0;
+    cat.dorks.forEach(function(d) {
+      count++;
+      if(count <= 10) openDork(d.q, eng);
+    });
+    if(count > 10) alert('Opened first 10. Browser may block more popups.');
+  }
+
+  function toggleCat(id) {
+    var body = document.getElementById('body-'+id);
+    var chev = document.getElementById('chev-'+id);
+    if(!body) return;
+    var isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chev.classList.toggle('open', !isOpen);
+  }
+
+  function toggleCheck(id) {
+    checked[id] = !checked[id];
+    render();
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function render() {
+    var search = getSearch();
+    var container = document.getElementById('categories');
+    var html = '';
+
+    CATS.forEach(function(cat) {
+      var filtered = cat.dorks.filter(function(d) {
+        var matchSearch = !search || d.label.toLowerCase().indexOf(search)!==-1 || d.q.toLowerCase().indexOf(search)!==-1;
+        var matchFilter = !filterActive || !checked[d.id];
+        return matchSearch && matchFilter;
+      });
+      if(!filtered.length) return;
+
+      var catDone = cat.dorks.filter(function(d){return checked[d.id];}).length;
+      var catPct = Math.round(catDone/cat.dorks.length*100);
+      var allChecked = catDone === cat.dorks.length;
+
+      var engTags = cat.engines.map(function(e) {
+        var c = ENGINE_COLORS[e] || '#888';
+        return '<span class="eng-tag" style="background:'+c+'18;color:'+c+';border:1px solid '+c+'44">'+e+'</span>';
+      }).join('');
+
+      var dorkRows = filtered.map(function(d) {
+        var done = checked[d.id];
+        var filled = escapeHtml(fillDork(d.q));
+        return '<div class="dork-row'+(done?' done':'')+'" id="row-'+d.id+'">' +
+          '<input type="checkbox" class="dork-check" '+(done?'checked':'')+' data-dork-id="'+d.id+'"/>' +
+          '<div class="dork-info">' +
+            '<div class="dork-label">'+escapeHtml(d.label)+'</div>' +
+            '<div class="dork-query">'+filled+'</div>' +
+          '</div>' +
+          '<div class="dork-actions">' +
+            '<button class="dork-btn" id="copy-'+d.id+'" data-copy-q="'+escapeHtml(d.q)+'" data-copy-id="'+d.id+'">Copy</button>' +
+            '<button class="dork-btn open-btn" data-open-q="'+escapeHtml(d.q)+'">Open</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      html += '<div class="cat-card">' +
+        '<div class="cat-header" data-cat-toggle="'+cat.id+'">' +
+          '<span class="cat-name">'+cat.name+'</span>' +
+          '<div class="cat-engines">'+engTags+'</div>' +
+          '<span class="cat-prog">'+catDone+'/'+cat.dorks.length+'</span>' +
+          '<span class="cat-chevron open" id="chev-'+cat.id+'">&#9650;</span>' +
+        '</div>' +
+        '<div class="cat-body" id="body-'+cat.id+'">' +
+          '<div class="cat-actions">' +
+            '<button class="cat-action-btn" data-select-all="'+cat.id+'">'+(allChecked?'Deselect All':'Select All')+'</button>' +
+            '<button class="cat-action-btn open-cat" data-open-all="'+cat.id+'">Open All in '+getEngine()+'</button>' +
+          '</div>' +
+          '<div class="cat-insight"><span class="cat-insight-icon">&#9432;</span>'+cat.insight+'</div>' +
+          '<div class="cat-subprog"><div class="cat-subprog-fill" style="width:'+catPct+'%"></div></div>' +
+          dorkRows +
+        '</div>' +
+      '</div>';
+    });
+
+    container.innerHTML = html;
+    bindEvents();
+    updateProgress();
+  }
+
+  function bindEvents() {
+    // Category toggles
+    document.querySelectorAll('[data-cat-toggle]').forEach(function(el) {
+      el.addEventListener('click', function() { toggleCat(this.getAttribute('data-cat-toggle')); });
+    });
+
+    // Checkboxes
+    document.querySelectorAll('[data-dork-id]').forEach(function(el) {
+      el.addEventListener('change', function() { toggleCheck(this.getAttribute('data-dork-id')); });
+    });
+
+    // Copy buttons
+    document.querySelectorAll('[data-copy-q]').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        copyDork(this.getAttribute('data-copy-q'), this.getAttribute('data-copy-id'));
+      });
+    });
+
+    // Open buttons
+    document.querySelectorAll('[data-open-q]').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openDork(this.getAttribute('data-open-q'));
+      });
+    });
+
+    // Select all per category
+    document.querySelectorAll('[data-select-all]').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        selectAllCat(this.getAttribute('data-select-all'));
+      });
+    });
+
+    // Open all per category
+    document.querySelectorAll('[data-open-all]').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openAllCat(this.getAttribute('data-open-all'));
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    render();
+
+    document.getElementById('target-input').addEventListener('input', render);
+    document.getElementById('search-input').addEventListener('input', render);
+    document.getElementById('engine-select').addEventListener('change', render);
+    document.getElementById('filter-btn').addEventListener('click', toggleFilter);
+    document.getElementById('reset-btn').addEventListener('click', resetAll);
+    document.getElementById('open-checked-btn').addEventListener('click', openAllChecked);
   });
-  updateProgress();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  render();
-  document.getElementById('target-input').addEventListener('input', render);
-  document.getElementById('search-input').addEventListener('input', render);
-  document.getElementById('engine-select').addEventListener('change', render);
-});
+})();
 </script>
