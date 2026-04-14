@@ -40,30 +40,13 @@ import Footer from '../../components/Footer.astro';
     <div class="terminal-divider">════════════════════════════════════════════════════</div>
 
     <!-- ══════ TOOL INTERFACE ══════ -->
-    <section class="recon-tool reveal">
+    <section class="recon-tool">
 
       <!-- Target bar -->
       <div class="target-bar glass-card">
         <div class="target-row">
           <label class="target-label"><span class="green">$</span> target</label>
           <input id="target-input" class="target-input" placeholder="example.com" spellcheck="false" autocomplete="off" />
-        </div>
-        <div class="target-row">
-          <label class="target-label"><span class="green">$</span> engine</label>
-          <select id="engine-select" class="target-select">
-            <option>Google</option>
-            <option>Bing</option>
-            <option>Yandex</option>
-            <option>DuckDuckGo</option>
-            <option>Shodan</option>
-            <option>FOFA</option>
-            <option>Censys</option>
-            <option>GreyNoise</option>
-            <option>GitHub</option>
-            <option>GitLab</option>
-            <option>Grep.app</option>
-            <option>IntelX</option>
-          </select>
         </div>
         <div class="target-row">
           <label class="target-label"><span class="green">$</span> grep</label>
@@ -77,7 +60,7 @@ import Footer from '../../components/Footer.astro';
       </div>
 
       <!-- Progress bar -->
-      <div class="progress-wrap reveal">
+      <div class="progress-wrap">
         <div class="progress-meta">
           <span class="progress-label"><span class="green">$</span> progress --session</span>
           <span class="progress-count green" id="prog-count">0 / 0 complete</span>
@@ -93,7 +76,7 @@ import Footer from '../../components/Footer.astro';
     </section>
 
     <!-- ══════ DISCLAIMER ══════ -->
-    <section class="disclaimer reveal">
+    <section class="disclaimer">
       <div class="disclaimer-box glass-card">
         <span class="red">⚠</span>
         <span>Authorized security research only — always stay in scope. This tool generates search queries; it does not interact with any target systems.</span>
@@ -198,8 +181,7 @@ import Footer from '../../components/Footer.astro';
     flex-shrink: 0;
   }
 
-  .target-input,
-  .target-select {
+  .target-input {
     flex: 1;
     font-family: var(--font);
     font-size: 0.82rem;
@@ -216,16 +198,10 @@ import Footer from '../../components/Footer.astro';
     color: rgba(224, 224, 224, 0.3);
   }
 
-  .target-input:focus,
-  .target-select:focus {
+  .target-input:focus {
     border-color: rgba(0, 255, 65, 0.5);
     box-shadow: 0 0 12px var(--green-glow);
     color: #ffffff;
-  }
-
-  .target-select option {
-    background: #111;
-    color: #e0e0e0;
   }
 
   .target-actions {
@@ -550,7 +526,7 @@ import Footer from '../../components/Footer.astro';
 
 <script is:inline>
 (function() {
-  const ENGINE_URLS = {
+  var ENGINE_URLS = {
     Google: function(q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); },
     Bing: function(q) { return 'https://www.bing.com/search?q=' + encodeURIComponent(q); },
     Yandex: function(q) { return 'https://yandex.com/search/?text=' + encodeURIComponent(q); },
@@ -812,6 +788,12 @@ import Footer from '../../components/Footer.astro';
     }
   ];
 
+  // Build a lookup: dork ID -> category ID (for finding the right engine)
+  var dorkToCat = {};
+  CATS.forEach(function(cat) {
+    cat.dorks.forEach(function(d) { dorkToCat[d.id] = cat.id; });
+  });
+
   var checked = {};
   var filterActive = false;
 
@@ -820,10 +802,20 @@ import Footer from '../../components/Footer.astro';
     return q.replace(/\{target\}/g, t);
   }
 
-  function getEngine() { return document.getElementById('engine-select').value; }
   function getSearch() { return document.getElementById('search-input').value.toLowerCase(); }
   function totalDorks() { var n=0; CATS.forEach(function(c){n+=c.dorks.length;}); return n; }
   function checkedCount() { var n=0; for(var k in checked){if(checked[k])n++;} return n; }
+
+  // Get the correct engine for a category
+  function getCatEngine(catId) {
+    var cat = CATS.find(function(c){return c.id===catId;});
+    return cat ? cat.engines[0] : 'Google';
+  }
+
+  // Get the correct engine for a dork by its ID
+  function getDorkEngine(dorkId) {
+    return getCatEngine(dorkToCat[dorkId]);
+  }
 
   function updateProgress() {
     var tot = totalDorks(), done = checkedCount();
@@ -854,15 +846,15 @@ import Footer from '../../components/Footer.astro';
   }
 
   function openDork(q, engine) {
-    var eng = engine || getEngine();
-    var fn = ENGINE_URLS[eng];
+    var fn = ENGINE_URLS[engine];
     if(fn) window.open(fn(fillDork(q)), '_blank');
   }
 
+  // Open all checked dorks, each in its correct engine
   function openAllChecked() {
-    var eng = getEngine();
     var count = 0;
     CATS.forEach(function(cat) {
+      var eng = cat.engines[0]; // primary engine for this category
       cat.dorks.forEach(function(d) {
         if(checked[d.id]) {
           count++;
@@ -882,10 +874,11 @@ import Footer from '../../components/Footer.astro';
     render();
   }
 
+  // Open all dorks in a category using that category's primary engine
   function openAllCat(catId) {
     var cat = CATS.find(function(c){return c.id===catId;});
     if(!cat) return;
-    var eng = getEngine();
+    var eng = cat.engines[0];
     var count = 0;
     cat.dorks.forEach(function(d) {
       count++;
@@ -928,6 +921,7 @@ import Footer from '../../components/Footer.astro';
       var catDone = cat.dorks.filter(function(d){return checked[d.id];}).length;
       var catPct = Math.round(catDone/cat.dorks.length*100);
       var allChecked = catDone === cat.dorks.length;
+      var primaryEngine = cat.engines[0];
 
       var engTags = cat.engines.map(function(e) {
         var c = ENGINE_COLORS[e] || '#888';
@@ -937,6 +931,7 @@ import Footer from '../../components/Footer.astro';
       var dorkRows = filtered.map(function(d) {
         var done = checked[d.id];
         var filled = escapeHtml(fillDork(d.q));
+        // Each dork's Open button uses its category's primary engine
         return '<div class="dork-row'+(done?' done':'')+'" id="row-'+d.id+'">' +
           '<input type="checkbox" class="dork-check" '+(done?'checked':'')+' data-dork-id="'+d.id+'"/>' +
           '<div class="dork-info">' +
@@ -945,7 +940,7 @@ import Footer from '../../components/Footer.astro';
           '</div>' +
           '<div class="dork-actions">' +
             '<button class="dork-btn" id="copy-'+d.id+'" data-copy-q="'+escapeHtml(d.q)+'" data-copy-id="'+d.id+'">Copy</button>' +
-            '<button class="dork-btn open-btn" data-open-q="'+escapeHtml(d.q)+'">Open</button>' +
+            '<button class="dork-btn open-btn" data-open-q="'+escapeHtml(d.q)+'" data-open-eng="'+primaryEngine+'">Open in '+primaryEngine+'</button>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -960,7 +955,7 @@ import Footer from '../../components/Footer.astro';
         '<div class="cat-body" id="body-'+cat.id+'">' +
           '<div class="cat-actions">' +
             '<button class="cat-action-btn" data-select-all="'+cat.id+'">'+(allChecked?'Deselect All':'Select All')+'</button>' +
-            '<button class="cat-action-btn open-cat" data-open-all="'+cat.id+'">Open All in '+getEngine()+'</button>' +
+            '<button class="cat-action-btn open-cat" data-open-all="'+cat.id+'">Open All in '+primaryEngine+'</button>' +
           '</div>' +
           '<div class="cat-insight"><span class="cat-insight-icon">&#9432;</span>'+cat.insight+'</div>' +
           '<div class="cat-subprog"><div class="cat-subprog-fill" style="width:'+catPct+'%"></div></div>' +
@@ -975,17 +970,14 @@ import Footer from '../../components/Footer.astro';
   }
 
   function bindEvents() {
-    // Category toggles
     document.querySelectorAll('[data-cat-toggle]').forEach(function(el) {
       el.addEventListener('click', function() { toggleCat(this.getAttribute('data-cat-toggle')); });
     });
 
-    // Checkboxes
     document.querySelectorAll('[data-dork-id]').forEach(function(el) {
       el.addEventListener('change', function() { toggleCheck(this.getAttribute('data-dork-id')); });
     });
 
-    // Copy buttons
     document.querySelectorAll('[data-copy-q]').forEach(function(el) {
       el.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -993,15 +985,14 @@ import Footer from '../../components/Footer.astro';
       });
     });
 
-    // Open buttons
+    // Open buttons now carry their engine in data-open-eng
     document.querySelectorAll('[data-open-q]').forEach(function(el) {
       el.addEventListener('click', function(e) {
         e.stopPropagation();
-        openDork(this.getAttribute('data-open-q'));
+        openDork(this.getAttribute('data-open-q'), this.getAttribute('data-open-eng'));
       });
     });
 
-    // Select all per category
     document.querySelectorAll('[data-select-all]').forEach(function(el) {
       el.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -1009,7 +1000,6 @@ import Footer from '../../components/Footer.astro';
       });
     });
 
-    // Open all per category
     document.querySelectorAll('[data-open-all]').forEach(function(el) {
       el.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -1020,10 +1010,8 @@ import Footer from '../../components/Footer.astro';
 
   document.addEventListener('DOMContentLoaded', function() {
     render();
-
     document.getElementById('target-input').addEventListener('input', render);
     document.getElementById('search-input').addEventListener('input', render);
-    document.getElementById('engine-select').addEventListener('change', render);
     document.getElementById('filter-btn').addEventListener('click', toggleFilter);
     document.getElementById('reset-btn').addEventListener('click', resetAll);
     document.getElementById('open-checked-btn').addEventListener('click', openAllChecked);
