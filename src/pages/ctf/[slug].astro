@@ -1,0 +1,42 @@
+---
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const ctfs = await Astro.glob('../../content/ctf/*.md');
+  const published = ctfs
+    .filter(c => c.frontmatter.published)
+    .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+
+  return published.map((ctf, i) => {
+    const slug = ctf.file.split('/').pop()!.replace('.md', '');
+    const prev = published[i + 1];
+    const next = published[i - 1];
+    return {
+      params: { slug },
+      props: {
+        ctf,
+        prevPost: prev ? { slug: `/ctf/${prev.file.split('/').pop()!.replace('.md', '')}`, title: prev.frontmatter.title } : null,
+        nextPost: next ? { slug: `/ctf/${next.file.split('/').pop()!.replace('.md', '')}`, title: next.frontmatter.title } : null,
+      },
+    };
+  });
+}
+
+const { ctf, prevPost, nextPost } = Astro.props;
+const { Content, frontmatter } = ctf;
+---
+<PostLayout
+  title={frontmatter.title}
+  date={frontmatter.date}
+  tags={frontmatter.tags}
+  platform={frontmatter.platform}
+  difficulty={frontmatter.difficulty}
+  category={frontmatter.category}
+  excerpt={frontmatter.excerpt}
+  backHref="/ctf"
+  backLabel="← ctf writeups"
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
+  <Content />
+</PostLayout>

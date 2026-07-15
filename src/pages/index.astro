@@ -1,0 +1,735 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import BlogCard from '../components/BlogCard.astro';
+import CTFCard from '../components/CTFCard.astro';
+import ToolGrid from '../components/ToolGrid.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Footer from '../components/Footer.astro';
+
+// ── Load content ──────────────────────────────────────────────────────────────
+const blogFiles = await Astro.glob('../content/blog/*.md');
+const ctfFiles  = await Astro.glob('../content/ctf/*.md');
+const projFiles = await Astro.glob('../content/projects/*.md');
+
+const blogs = blogFiles
+  .filter(p => p.frontmatter.published)
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
+  .slice(0, 3);
+
+const ctfs = ctfFiles
+  .filter(p => p.frontmatter.published)
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
+  .slice(0, 3);
+
+const featuredOrder = ['osint-recon-tool', 'nightowl-ir', 'cicd-security-vulnerability-gatekeeper', 'advalidate'];
+const featuredProjects = projFiles
+  .filter(p => p.frontmatter.featured)
+  .sort((a, b) => featuredOrder.indexOf(getSlug(a)) - featuredOrder.indexOf(getSlug(b)))
+  .slice(0, 4);
+
+// Bug Bounty companies
+const bbCompanies = [
+  'Cloudflare', 'Expedia Group', 'Shutterfly',
+  'LY Corporation', 'Modern Treasury', 'Mattermost', 'Forge Global',
+];
+
+// Certifications (issued) vs courses / training
+const certifications = [
+  { name: 'PNPT — Practical Network Penetration Tester', issuer: 'TCM Security', status: 'completed' as const },
+  { name: 'CC — Certified in Cybersecurity', issuer: '(ISC)²', status: 'completed' as const },
+];
+
+const courses = [
+  { name: 'Practical Ethical Hacking — The Complete Course', issuer: 'Udemy', year: '2023' },
+  { name: 'Bug Bounty Hunting with Burp Suite', issuer: 'Udemy', year: '2023' },
+  { name: 'Cyber Security', issuer: 'Udemy', year: '2022' },
+  { name: 'Cryptography', issuer: 'Cybrary', year: '2022' },
+  { name: 'CompTIA Linux+', issuer: 'Cybrary', year: '2022' },
+  { name: 'Penetration Testing & Ethical Hacking', issuer: 'Cybrary', year: '2022' },
+  { name: 'IELTS — 7.0 Bands', issuer: 'British Council' },
+];
+
+// Sample pentest reports — drop sanitized PDFs into public/reports/ and edit these entries.
+const reports = [
+  {
+    title: 'Web Application Penetration Test',
+    engagement: 'Grey-box',
+    scope: 'OWASP Top 10 · PCI DSS aligned',
+    findings: '24 findings · 3 Critical',
+    date: '2025',
+    file: '/reports/sample-webapp-pentest.pdf',
+  },
+  {
+    title: 'Network Penetration Test',
+    engagement: 'Black-box',
+    scope: 'Internal / External infrastructure',
+    findings: 'CVSS v3.1 scored',
+    date: '2025',
+    file: '/reports/sample-network-pentest.pdf',
+  },
+];
+
+function getSlug(file: any) {
+  return file.file.split('/').pop()!.replace('.md', '');
+}
+---
+<BaseLayout>
+  <Nav />
+
+  <main>
+    <!-- ── OVERVIEW (everything up top) ── -->
+    <section id="about" class="section overview">
+      <p class="section-title reveal">$ ./overview --all</p>
+
+      <div class="bento">
+        <!-- terminal -->
+        <div class="b-terminal reveal">
+          <Hero />
+        </div>
+
+        <!-- identity -->
+        <div class="b-tile b-identity glass-card reveal">
+          <h1 class="hero-name">Muhammad Tayab Bashir</h1>
+          <p class="hero-sub">
+            <span class="green">Web Pentesting</span> · <span class="green">Network Security</span> ·
+            <span class="green">OSINT</span> · <span class="green">Active Directory</span> . <span class="green">Bug Bounty</span> 
+          </p>
+          <div class="id-badges">
+            <span class="status-badge"><span class="pulse-dot"></span> Available for engagements</span>
+            <span class="status-badge">CC — (ISC)²</span>
+            <span class="status-badge">PNPT — TCM-SEC</span>
+          </div>
+          <div class="id-cta">
+            <a href="/#projects" class="btn-primary">./view_projects.sh</a>
+            <a href="/#contact" class="btn-secondary">contact Tayab</a>
+            <a href="https://hackerone.com/n16h70wl55" target="_blank" rel="noopener" class="btn-ghost">HackerOne ↗</a>
+          </div>
+        </div>
+
+        <!-- profile facts -->
+        <div class="b-tile b-facts glass-card reveal">
+          <h4 class="glance-label"><span class="green">></span> profile</h4>
+          <div class="facts-row">
+            <div class="fact"><span class="fact-k">role</span><span class="fact-v">Penetration Tester</span></div>
+            <div class="fact"><span class="fact-k">experience</span><span class="fact-v">2+ years</span></div>
+            <div class="fact"><span class="fact-k">current</span><span class="fact-v">Cyber Silo Pvt. Ltd.</span></div>
+            <div class="fact"><span class="fact-k">education</span><span class="fact-v">B.Sc. CS — UCP</span></div>
+            <div class="fact"><span class="fact-k">certs</span><span class="fact-v">PNPT · CC</span></div>
+          </div>
+        </div>
+
+        <!-- whoami / bio -->
+        <div class="b-tile b-about glass-card reveal">
+          <h4 class="glance-label"><span class="green">></span> whoami</h4>
+          <p>
+            Experienced <span class="green">Penetration Tester</span> and <span class="green">Bug Bounty Hunter</span>
+            with 2+ years in professional cybersecurity — identifying and mitigating vulnerabilities across web
+            applications, APIs, and network and Active Directory infrastructure.
+          </p>
+          <p>
+            At <span class="green">Cyber Silo Pvt. Ltd.</span> I run weekly grey-box and black-box tests and author
+            PCI DSS-aligned reports, and hunt independently on HackerOne and Bugcrowd — with disclosed flaws at
+            Cloudflare, Expedia Group, and more.
+          </p>
+          <div class="about-links">
+            <a href="https://hackerone.com/n16h70wl55" target="_blank" rel="noopener" class="about-link">HackerOne ↗</a>
+            <a href="https://www.linkedin.com/in/muhammad-tayab-bashir-694b84125/" target="_blank" rel="noopener" class="about-link">LinkedIn ↗</a>
+            <a href="mailto:tayyabbashir461@gmail.com" class="about-link">Email ↗</a>
+          </div>
+        </div>
+
+        <!-- certifications + courses -->
+        <div id="certs" class="b-tile b-certs glass-card reveal">
+          <h4 class="glance-label"><span class="green">></span> certifications</h4>
+          <ul class="cert-list">
+            {certifications.map(cert => (
+              <li>
+                <span class={`cdot ${cert.status === 'in-progress' ? 'wip' : 'done'}`}></span>
+                <span class="cname">{cert.name}</span>
+                <span class="ciss">{cert.issuer}{cert.status === 'in-progress' ? ' · WIP' : ''}</span>
+              </li>
+            ))}
+          </ul>
+          <h4 class="glance-label" style="margin-top:18px"><span class="green">></span> courses &amp; training</h4>
+          <ul class="cert-list">
+            {courses.map(course => (
+              <li>
+                <span class="cdot done"></span>
+                <span class="cname">{course.name}</span>
+                <span class="ciss">{course.issuer}{course.year ? ` · ${course.year}` : ''}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- focus areas -->
+        <div class="b-tile b-focus glass-card reveal">
+          <h4 class="glance-label"><span class="green">></span> focus areas</h4>
+          <div class="focus-tags">
+            <span class="tag">Web App Pentesting</span>
+            <span class="tag">Network Security</span>
+            <span class="tag">Active Directory</span>
+            <span class="tag">OWASP Top 10</span>
+            <span class="tag">OSINT & Recon</span>
+            <span class="tag">Bug Bounty</span>
+            <span class="tag">Vuln Research</span>
+            <span class="tag">PCI DSS</span>
+          </div>
+        </div>
+
+        <!-- bug bounty hall of fame -->
+        <div class="b-tile b-bounty glass-card reveal">
+          <h4 class="glance-label"><span class="green">></span> bug bounty hall of fame</h4>
+          <div class="bounty-chips">
+            {bbCompanies.map(company => (
+              <span class="bchip"><span class="green">▸</span> {company}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    </div>
+
+    <!-- ── PROJECTS ── -->
+    <section id="projects" class="section">
+      <p class="section-title reveal">$ ls -la ./projects/</p>
+      <h2 class="section-heading reveal">Projects</h2>
+      <div class="projects-grid">
+        {featuredProjects.map(proj => (
+          <div class="reveal">
+            <ProjectCard
+              title={proj.frontmatter.title}
+              excerpt={proj.frontmatter.excerpt}
+              stack={proj.frontmatter.stack}
+              github={proj.frontmatter.github}
+              liveUrl={proj.frontmatter.liveUrl}
+              status={proj.frontmatter.status}
+              featured={proj.frontmatter.featured}
+              slug={getSlug(proj)}
+            />
+          </div>
+        ))}
+      </div>
+      <div class="see-all reveal">
+        <a href="/projects" class="see-all-link">ls -la ./all-projects/ →</a>
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ PENTEST REPORTS ] ════════════════
+    </div>
+
+    <!-- ── SAMPLE PENTEST REPORTS ── -->
+    <section id="reports" class="section">
+      <p class="section-title reveal">$ ls -la ./reports/</p>
+      <h2 class="section-heading reveal">Sample Pentest Reports</h2>
+      <p class="section-desc reveal" style="margin-bottom:40px">
+        Redacted, sanitized sample deliverables — the structure, methodology, and remediation
+        detail I bring to every engagement. No real client data.
+      </p>
+      <div class="reports-grid">
+        {reports.map(r => (
+          <a href={r.file} class="report-card glass-card reveal" download>
+            <div class="report-top">
+              <span class="report-icon">▤</span>
+              <span class="tag">{r.engagement}</span>
+            </div>
+            <h3 class="report-title">{r.title}</h3>
+            <ul class="report-meta">
+              <li><span class="dim">scope:</span> {r.scope}</li>
+              <li><span class="dim">findings:</span> {r.findings}</li>
+              <li><span class="dim">date:</span> {r.date}</li>
+            </ul>
+            <span class="report-dl">Download PDF ↓</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ BLOG ] ════════════════
+    </div>
+
+    <!-- ── BLOG ── -->
+    <section id="blog" class="section">
+      <p class="section-title reveal">$ cat blog/recent.txt</p>
+      <h2 class="section-heading reveal">Latest Posts</h2>
+      <div class="cards-grid">
+        {blogs.map(post => (
+          <div class="reveal">
+            <BlogCard
+              title={post.frontmatter.title}
+              date={post.frontmatter.date}
+              tags={post.frontmatter.tags}
+              excerpt={post.frontmatter.excerpt}
+              slug={getSlug(post)}
+              platform={post.frontmatter.platform}
+            />
+          </div>
+        ))}
+      </div>
+      <div class="see-all reveal">
+        <a href="/blog" class="see-all-link">cat blog/all-posts.txt →</a>
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ CTF WRITEUPS ] ════════════════
+    </div>
+
+    <!-- ── CTF ── -->
+    <section id="ctf" class="section">
+      <p class="section-title reveal">$ cat ctf/recent.txt</p>
+      <h2 class="section-heading reveal">CTF Writeups</h2>
+      <div class="cards-grid">
+        {ctfs.map(ctf => (
+          <div class="reveal">
+            <CTFCard
+              title={ctf.frontmatter.title}
+              date={ctf.frontmatter.date}
+              platform={ctf.frontmatter.platform}
+              difficulty={ctf.frontmatter.difficulty}
+              category={ctf.frontmatter.category}
+              tags={ctf.frontmatter.tags}
+              excerpt={ctf.frontmatter.excerpt}
+              slug={getSlug(ctf)}
+            />
+          </div>
+        ))}
+      </div>
+      <div class="see-all reveal">
+        <a href="/ctf" class="see-all-link">cat ctf/all-writeups.txt →</a>
+      </div>
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ TOOLS ] ════════════════
+    </div>
+
+    <!-- ── TOOLS ── -->
+    <section id="tools" class="section">
+      <p class="section-title reveal">$ which --all tools</p>
+      <h2 class="section-heading reveal">Arsenal</h2>
+      <ToolGrid />
+    </section>
+
+    <div class="terminal-divider">
+      ════════════════ [ CONTACT ] ════════════════
+    </div>
+
+    <!-- ── CONTACT ── -->
+    <section id="contact" class="section">
+      <p class="section-title reveal">$ ssh contact@tayab.dev</p>
+      <h2 class="section-heading reveal">Get In Touch</h2>
+      <p class="section-desc reveal" style="margin-bottom:40px">
+        Available for freelance penetration testing engagements, bug bounty collaborations,
+        and security consulting. Response within 24–48 hours.
+      </p>
+      <div class="reveal">
+        <ContactForm />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .section-desc {
+    font-size: 0.88rem;
+    opacity: 0.65;
+    max-width: 620px;
+    line-height: 1.7;
+  }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-size: 0.88rem;
+    opacity: 0.8;
+    line-height: 1.8;
+  }
+
+  .about-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .about-link {
+    padding: 8px 16px;
+    border: 1px solid rgba(0,255,65,0.25);
+    border-radius: 4px;
+    color: var(--green);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .about-link:hover {
+    background: var(--green-dim);
+    box-shadow: 0 0 12px var(--green-glow);
+    opacity: 1;
+  }
+
+  .sidebar-block {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .sidebar-heading {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    color: var(--green);
+  }
+
+  .sidebar-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .sidebar-list li {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .sidebar-list li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+  }
+
+  .edu-degree { font-size: 0.88rem; color: var(--white); margin-bottom: 2px; }
+  .edu-school { font-size: 0.78rem; margin-bottom: 2px; }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .stat-card {
+    padding: 28px 24px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .stat-sub { font-size: 0.72rem; }
+
+  /* Projects grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  /* Cards grid (blog / ctf) */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  /* Certs */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  /* Bug bounty */
+  .bounty-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .bounty-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    transition: all 0.25s;
+  }
+
+  /* See all */
+  .see-all {
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .see-all-link {
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: var(--green);
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .see-all-link:hover { opacity: 1; }
+
+  /* ── Overview (everything up top) ── */
+  .overview { padding-top: 96px; padding-bottom: 56px; }
+  .overview .section-title { margin-bottom: 18px; }
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  .b-tile { padding: 20px 22px; }
+
+  /* terminal card */
+  .b-terminal { grid-column: span 5; display: flex; }
+
+  /* identity card */
+  .b-identity {
+    grid-column: span 7;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+  }
+  .b-identity .hero-name {
+    font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+    color: var(--white);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .b-identity .hero-sub { font-size: 0.8rem; letter-spacing: 0.05em; opacity: 0.85; }
+  .id-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--green-dim);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    color: var(--green);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+  }
+  .status-badge.preparing {
+    background: rgba(255, 34, 0, 0.08);
+    border-color: rgba(255, 34, 0, 0.2);
+    color: var(--red);
+  }
+  .pulse-dot {
+    width: 7px; height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .id-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+  .btn-primary {
+    padding: 10px 20px;
+    background: var(--green);
+    color: var(--bg) !important;
+    font-weight: 700; font-size: 0.78rem;
+    border-radius: 4px; letter-spacing: 0.04em;
+    transition: box-shadow 0.25s, transform 0.2s;
+  }
+  .btn-primary:hover { box-shadow: 0 0 24px var(--green-glow); transform: translateY(-2px); opacity: 1; }
+  .btn-secondary {
+    padding: 10px 20px;
+    border: 1px solid rgba(0, 255, 65, 0.4);
+    color: var(--green) !important;
+    font-size: 0.78rem; border-radius: 4px; letter-spacing: 0.04em;
+    transition: background 0.25s, box-shadow 0.25s;
+  }
+  .btn-secondary:hover { background: var(--green-dim); box-shadow: 0 0 16px var(--green-glow); opacity: 1; }
+  .btn-ghost {
+    padding: 10px 20px;
+    border: 1px solid var(--glass-border);
+    color: rgba(224, 224, 224, 0.6) !important;
+    font-size: 0.78rem; border-radius: 4px; letter-spacing: 0.04em;
+    transition: border-color 0.25s, color 0.25s;
+  }
+  .btn-ghost:hover { border-color: rgba(0, 255, 65, 0.3); color: var(--green) !important; opacity: 1; }
+
+  /* whoami / bio */
+  .b-about { grid-column: span 6; display: flex; flex-direction: column; }
+  .b-about p { font-size: 0.82rem; opacity: 0.82; line-height: 1.7; margin-bottom: 12px; }
+  .b-about .about-links { margin-top: auto; padding-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* profile facts (full-width strip) */
+  .b-facts { grid-column: span 12; }
+  .b-facts .facts-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 0;
+    margin-top: 4px;
+  }
+  .b-facts .fact {
+    flex: 1 1 auto;
+    min-width: 150px;
+    padding: 2px 22px;
+    border-left: 1px solid var(--glass-border);
+  }
+  .b-facts .fact:first-child { padding-left: 0; border-left: none; }
+  .b-facts .fact-v { font-size: 0.86rem; }
+
+  .bento .stat-card { grid-column: span 3; padding: 18px 14px; }
+  .bento .stat-value { font-size: 1.9rem; }
+
+  .b-certs { grid-column: span 6; }
+  .b-focus { grid-column: span 6; }
+  .b-bounty { grid-column: span 6; }
+
+  .glance-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 14px;
+  }
+
+  .focus-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .fact { display: flex; flex-direction: column; gap: 2px; }
+  .fact-k {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--green);
+    opacity: 0.7;
+  }
+  .fact-v { font-size: 0.82rem; color: var(--white); }
+
+  /* Certifications (compact) */
+  .cert-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cert-list li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+  .cdot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+  .cdot.done { background: var(--green); box-shadow: 0 0 5px var(--green-glow); }
+  .cdot.wip  { background: var(--red);   box-shadow: 0 0 5px rgba(255, 34, 0, 0.5); }
+  .cname { color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ciss { margin-left: auto; opacity: 0.45; white-space: nowrap; font-size: 0.68rem; padding-left: 12px; }
+
+  /* Bug bounty (compact) */
+  .bounty-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .bchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    background: var(--glass-bg);
+    transition: border-color 0.25s;
+  }
+  .bchip:hover { border-color: rgba(0, 255, 65, 0.3); }
+
+  /* ── Sample pentest reports ── */
+  .reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .report-card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .report-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .report-icon { color: var(--green); font-size: 1.4rem; }
+
+  .report-title {
+    font-size: 1.02rem;
+    color: var(--white);
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .report-meta {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.8rem;
+    opacity: 0.85;
+    margin-bottom: 18px;
+  }
+
+  .report-dl {
+    margin-top: auto;
+    font-size: 0.8rem;
+    color: var(--green);
+    letter-spacing: 0.05em;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 14px;
+  }
+
+  @media (max-width: 860px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+    .bento { grid-template-columns: repeat(2, 1fr); }
+    .b-terminal, .b-identity, .b-about, .b-facts, .b-certs, .b-focus, .b-bounty {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+    .bento .stat-card { grid-column: span 1; }
+  }
+</style>
+

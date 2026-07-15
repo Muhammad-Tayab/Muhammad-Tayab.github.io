@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import CTFCard from '../../components/CTFCard.astro';
+import Footer from '../../components/Footer.astro';
+
+const allCTFs = await Astro.glob('../../content/ctf/*.md');
+const ctfs = allCTFs
+  .filter(c => c.frontmatter.published)
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+
+function getSlug(file: any) {
+  return file.file.split('/').pop()!.replace('.md', '');
+}
+
+const platforms   = [...new Set(ctfs.map(c => c.frontmatter.platform))];
+const difficulties = [...new Set(ctfs.map(c => c.frontmatter.difficulty))];
+---
+<BaseLayout title="CTF Writeups | Muhammad Tayab Bashir" description="HackTheBox and TryHackMe CTF machine writeups by Muhammad Tayab Bashir.">
+  <Nav />
+  <main class="page-main">
+    <div class="section">
+      <p class="section-title reveal">$ ls -la ./ctf/</p>
+      <h1 class="section-heading reveal">CTF Writeups</h1>
+      <p class="page-desc reveal">
+        Detailed walkthroughs for HackTheBox and TryHackMe machines — covering web exploitation,
+        privilege escalation, OSINT, and more.
+      </p>
+
+      <!-- Filters -->
+      <div class="filters reveal">
+        <div class="filter-group">
+          <span class="filter-label dim">platform:</span>
+          <button class="filter-btn active" data-filter="platform" data-value="all">all</button>
+          {platforms.map(p => (
+            <button class="filter-btn" data-filter="platform" data-value={p}>
+              {p === 'HackTheBox' ? 'HTB' : p === 'TryHackMe' ? 'THM' : p}
+            </button>
+          ))}
+        </div>
+        <div class="filter-group">
+          <span class="filter-label dim">difficulty:</span>
+          <button class="filter-btn active" data-filter="difficulty" data-value="all">all</button>
+          {difficulties.map(d => (
+            <button class="filter-btn" data-filter="difficulty" data-value={d}>{d}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="ctf-grid" id="ctfGrid">
+        {ctfs.map(ctf => (
+          <div
+            class="reveal ctf-item"
+            data-platform={ctf.frontmatter.platform}
+            data-difficulty={ctf.frontmatter.difficulty}
+          >
+            <CTFCard
+              title={ctf.frontmatter.title}
+              date={ctf.frontmatter.date}
+              platform={ctf.frontmatter.platform}
+              difficulty={ctf.frontmatter.difficulty}
+              category={ctf.frontmatter.category}
+              tags={ctf.frontmatter.tags}
+              excerpt={ctf.frontmatter.excerpt}
+              slug={getSlug(ctf)}
+            />
+          </div>
+        ))}
+      </div>
+
+      {ctfs.length === 0 && (
+        <div class="empty-state reveal">
+          <p class="green">// Writeups incoming — machines are being rooted.</p>
+        </div>
+      )}
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .page-main { padding-top: 100px; min-height: 100vh; }
+  .page-desc { font-size: 0.88rem; opacity: 0.6; max-width: 600px; line-height: 1.7; margin-bottom: 32px; }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-label { font-size: 0.72rem; letter-spacing: 0.1em; white-space: nowrap; }
+
+  .filter-btn {
+    padding: 4px 12px;
+    border: 1px solid var(--glass-border);
+    background: none;
+    color: rgba(224,224,224,0.5);
+    font-family: var(--font);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: none;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    border-color: rgba(0,255,65,0.4);
+    color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .ctf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .ctf-item.hidden { display: none; }
+
+  .empty-state { padding: 60px 0; text-align: center; font-size: 0.9rem; }
+</style>
+
+<script>
+  let activePlatform = 'all';
+  let activeDifficulty = 'all';
+
+  function applyFilters() {
+    const items = document.querySelectorAll<HTMLElement>('.ctf-item');
+    items.forEach(item => {
+      const matchP = activePlatform === 'all' || item.dataset.platform === activePlatform;
+      const matchD = activeDifficulty === 'all' || item.dataset.difficulty === activeDifficulty;
+      item.classList.toggle('hidden', !(matchP && matchD));
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.dataset.filter!;
+      // Deactivate siblings
+      document.querySelectorAll<HTMLButtonElement>(`.filter-btn[data-filter="${group}"]`)
+        .forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (group === 'platform') activePlatform = btn.dataset.value || 'all';
+      if (group === 'difficulty') activeDifficulty = btn.dataset.value || 'all';
+      applyFilters();
+    });
+  });
+</script>

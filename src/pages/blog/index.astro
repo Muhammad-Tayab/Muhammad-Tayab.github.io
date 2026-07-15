@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import Footer from '../../components/Footer.astro';
+
+const allPosts = await Astro.glob('../../content/blog/*.md');
+const posts = allPosts
+  .filter(p => p.frontmatter.published)
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+
+function getSlug(file: any) {
+  return file.file.split('/').pop()!.replace('.md', '');
+}
+
+// Collect all unique tags
+const allTags = [...new Set(posts.flatMap(p => p.frontmatter.tags || []))].sort();
+---
+<BaseLayout title="Blog | Muhammad Tayab Bashir" description="Security research articles, web pentesting guides, and bug bounty tips by Muhammad Tayab Bashir.">
+  <Nav />
+  <main class="page-main">
+    <div class="section">
+      <p class="section-title reveal">$ cat blog/*.md | sort --by-date</p>
+      <h1 class="section-heading reveal">Security Blog</h1>
+      <p class="page-desc reveal">
+        Writeups, research, and notes on web pentesting, bug bounty hunting, and offensive security.
+      </p>
+
+      <!-- Tag filter -->
+      <div class="tag-filter reveal" id="tagFilter">
+        <button class="filter-btn active" data-tag="all">all</button>
+        {allTags.map(tag => (
+          <button class="filter-btn" data-tag={tag}>{tag}</button>
+        ))}
+      </div>
+
+      <div class="blog-grid" id="blogGrid">
+        {posts.map(post => (
+          <div class="reveal blog-item" data-tags={JSON.stringify(post.frontmatter.tags || [])}>
+            <BlogCard
+              title={post.frontmatter.title}
+              date={post.frontmatter.date}
+              tags={post.frontmatter.tags}
+              excerpt={post.frontmatter.excerpt}
+              slug={getSlug(post)}
+              platform={post.frontmatter.platform}
+            />
+          </div>
+        ))}
+      </div>
+
+      {posts.length === 0 && (
+        <div class="empty-state reveal">
+          <p class="green">// No posts yet — check back soon.</p>
+        </div>
+      )}
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .page-main {
+    padding-top: 100px;
+    min-height: 100vh;
+  }
+
+  .page-desc {
+    font-size: 0.88rem;
+    opacity: 0.6;
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  /* Tag filter */
+  .tag-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .filter-btn {
+    padding: 5px 14px;
+    border: 1px solid var(--glass-border);
+    background: none;
+    color: rgba(224,224,224,0.5);
+    font-family: var(--font);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: none;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    border-color: rgba(0,255,65,0.4);
+    color: var(--green);
+    background: var(--green-dim);
+  }
+
+  /* Grid */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .blog-item {
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  .blog-item.hidden {
+    display: none;
+  }
+
+  .empty-state {
+    padding: 60px 0;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+</style>
+
+<script>
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const items = document.querySelectorAll<HTMLElement>('.blog-item');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const tag = btn.dataset.tag || 'all';
+      items.forEach(item => {
+        if (tag === 'all') {
+          item.classList.remove('hidden');
+        } else {
+          const tags: string[] = JSON.parse(item.dataset.tags || '[]');
+          item.classList.toggle('hidden', !tags.includes(tag));
+        }
+      });
+    });
+  });
+</script>

@@ -1,0 +1,40 @@
+---
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await Astro.glob('../../content/blog/*.md');
+  const published = posts
+    .filter(p => p.frontmatter.published)
+    .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+
+  return published.map((post, i) => {
+    const slug = post.file.split('/').pop()!.replace('.md', '');
+    const prev = published[i + 1];
+    const next = published[i - 1];
+    return {
+      params: { slug },
+      props: {
+        post,
+        prevPost: prev ? { slug: `/blog/${prev.file.split('/').pop()!.replace('.md', '')}`, title: prev.frontmatter.title } : null,
+        nextPost: next ? { slug: `/blog/${next.file.split('/').pop()!.replace('.md', '')}`, title: next.frontmatter.title } : null,
+      },
+    };
+  });
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content, frontmatter } = post;
+---
+<PostLayout
+  title={frontmatter.title}
+  date={frontmatter.date}
+  tags={frontmatter.tags}
+  platform={frontmatter.platform}
+  excerpt={frontmatter.excerpt}
+  backHref="/blog"
+  backLabel="← blog"
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
+  <Content />
+</PostLayout>
